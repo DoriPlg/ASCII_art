@@ -82,10 +82,10 @@ public class Image {
         return newHeight;
     }
 
-    private static double grayCode(Color color) {
-        return color.getRed() * 0.2126 +
-                color.getGreen() * 0.7152 +
-                color.getBlue() * 0.0722;
+    private static float grayCode(Color color) {
+        return color.getRed() * 0.2126f +
+                color.getGreen() * 0.7152f +
+                color.getBlue() * 0.0722f;
     }
 
 
@@ -113,7 +113,7 @@ public class Image {
         pixelArray = newPixelArray;
     }
 
-    public Image[][] getSubImages(int resolution) {
+    private Image[][] getSubImages(int resolution) {
         int pixelDim = width/resolution;
         int pixelPrHeight = height/pixelDim;
 
@@ -132,8 +132,8 @@ public class Image {
         return subImages;
     }
 
-    private double getbrightness(){
-        double brightness = 0;
+    private float getbrightness(){
+        float brightness = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 brightness += grayCode(getPixel(i,j));
@@ -142,9 +142,9 @@ public class Image {
         return brightness/(255*width*height);
     }
 
-    public double[][] getbrightness(int resolution){
+    public float[][] getbrightness(int resolution){
         Image[][] subImages = getSubImages(resolution);
-        double[][] brightness = new double[resolution][height*resolution/width];
+        float[][] brightness = new float[resolution][height*resolution/width];
         for (int x = 0; x < resolution; x++) {
             for (int y = 0; y < (height * resolution / width); y++) {
                 brightness[y][x] = subImages[y][x].getbrightness();
