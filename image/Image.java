@@ -105,7 +105,6 @@ public class Image {
                 }
                 else {
                     newPixelArray[y][x] = getPixel(x+sideBuffer, y+sideBuffer);
-                    // TODO: by value?
                 }
             }
         }
@@ -124,7 +123,6 @@ public class Image {
                 Color[][] subImage = new Color[pixelDim][pixelDim];
                 for (int x = 0; k < pixelDim; k++) {
                     for (int y = 0; y < pixelDim; y++) {
-                        // TODO: by value?
                         subImage[y][x] = getPixel(x+resolution*j, y+resolution*i);
                     }
                 }
