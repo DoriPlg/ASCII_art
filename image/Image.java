@@ -66,4 +66,91 @@ public class Image {
         }
     }
 
+    private int bufferedWidth() {
+        int newWidth = 2;
+        while (newWidth < width) {
+            newWidth *= 2;
+        }
+        return newWidth;
+    }
+
+    private int bufferedHeight() {
+        int newHeight = 2;
+        while (newHeight < height) {
+            newHeight *= 2;
+        }
+        return newHeight;
+    }
+
+    private static double grayCode(Color color) {
+        return color.getRed() * 0.2126 +
+                color.getGreen() * 0.7152 +
+                color.getBlue() * 0.0722;
+    }
+
+
+    private int[] buffer(){
+        int buffH = bufferedHeight();
+        int buffW = bufferedWidth();
+
+        int topBuffer = (buffH-height)/2;
+        int sideBuffer = (buffW-width)/2;
+
+        Color[][] newPixelArray = new Color[buffH][buffW];
+        for (int y = 0; y < bufferedHeight(); y++) {
+            for (int x = 0; x < bufferedWidth(); x++) {
+                if (x < sideBuffer || x > sideBuffer + width ||
+                        y < topBuffer || y > topBuffer + height) {
+                    newPixelArray[y][x]=new Color(255,255,255);
+                }
+                else {
+                    newPixelArray[y][x] = getPixel(x+sideBuffer, y+sideBuffer);
+                    // TODO: by value?
+                }
+            }
+        }
+        height = buffH;
+        width = buffW;
+        pixelArray = newPixelArray;
+    }
+
+    public Image[][] getSubImages(int resolution) {
+        int pixelDim = width/resolution;
+        int pixelPrHeight = height/pixelDim;
+
+        Image[][] subImages = new Image[pixelPrHeight][resolution];
+        for (int i = 0; i < resolution ; i++) {
+            for (int j = 0; j < pixelPrHeight; j++) {
+                Color[][] subImage = new Color[pixelDim][pixelDim];
+                for (int x = 0; k < pixelDim; k++) {
+                    for (int y = 0; y < pixelDim; y++) {
+                        // TODO: by value?
+                        subImage[y][x] = getPixel(x+resolution*j, y+resolution*i);
+                    }
+                }
+                subImages[j][i]  = new Image(subImage,pixelDim,pixelDim);
+            }
+        }
+        return subImages;
+    }
+
+    private double getbrightness(){
+        double brightness = 0;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                brightness += grayCode(getPixel(i,j));
+            }
+        }
+        return brightness/(255*width*height);
+    }
+
+    public double[][] getbrightness(int resolution){
+        Image[][] subImages = getSubImages(resolution);
+        double[][] brightness = new double[resolution][height*resolution/width];
+        for (int x = 0; x < resolution; x++) {
+            for (int y = 0; y < (height * resolution / width); y++) {
+                brightness[y][x] = subImages[y][x].getbrightness();
+            }
+        }
+    }
 }
