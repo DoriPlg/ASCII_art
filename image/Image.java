@@ -16,6 +16,11 @@ public class Image {
     private final int width;
     private final int height;
 
+    /**
+     * Constructor for the Image class.
+     * @param filename The name of the file to be read.
+     * @throws IOException If the file is not found.
+     */
     public Image(String filename) throws IOException {
         BufferedImage im = ImageIO.read(new File(filename));
         width = im.getWidth();
@@ -30,24 +35,48 @@ public class Image {
         }
     }
 
+    /**
+     * Constructor for the Image class.
+     * @param pixelArray A 2D array of Color objects.
+     * @param width The width of the image.
+     * @param height The height of the image.
+     */
     public Image(Color[][] pixelArray, int width, int height) {
         this.pixelArray = pixelArray;
         this.width = width;
         this.height = height;
     }
 
+    /**
+     * Returns the width of the image.
+     * @return The width of the image.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Returns the height of the image.
+     * @return The height of the image.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Returns the pixel at the given coordinates.
+     * @param x The x-coordinate of the pixel.
+     * @param y The y-coordinate of the pixel.
+     * @return The Color object at the given coordinates.
+     */
     public Color getPixel(int x, int y) {
         return pixelArray[x][y];
     }
 
+    /**
+     * Sets the pixel at the given coordinates to the given color.
+     * @param fileName The name of the file to be saved.
+     */
     public void saveImage(String fileName){
         // Initialize BufferedImage, assuming Color[][] is already properly populated.
         BufferedImage bufferedImage = new BufferedImage(pixelArray[0].length, pixelArray.length,
@@ -66,6 +95,10 @@ public class Image {
         }
     }
 
+    /**
+     * Calculates the width the image should be buffered to.
+     * @return The width the image should be buffered to.
+     */
     private int bufferedWidth() {
         int newWidth = 2;
         while (newWidth < width) {
@@ -74,6 +107,10 @@ public class Image {
         return newWidth;
     }
 
+    /**
+     * Calculates the height the image should be buffered to.
+     * @return The height the image should be buffered to.
+     */
     private int bufferedHeight() {
         int newHeight = 2;
         while (newHeight < height) {
@@ -82,14 +119,22 @@ public class Image {
         return newHeight;
     }
 
+    /**
+     * Calculates the gray code of a given color.
+     * @param color The color to calculate the gray code of.
+     * @return The gray code of the given color.
+     */
     private static float grayCode(Color color) {
         return color.getRed() * 0.2126f +
                 color.getGreen() * 0.7152f +
                 color.getBlue() * 0.0722f;
     }
 
-
-    private int[] buffer(){
+    /**
+     * Buffers the image to the nearest power of 2.
+     * @return The buffered image.
+     */
+    public Image buffer(){
         int buffH = bufferedHeight();
         int buffW = bufferedWidth();
 
@@ -108,11 +153,14 @@ public class Image {
                 }
             }
         }
-        height = buffH;
-        width = buffW;
-        pixelArray = newPixelArray;
+        return new Image(newPixelArray,buffW,buffH);
     }
 
+    /**
+     * Splits the image into sub-images of a given resolution.
+     * @param resolution The of parts to split the image width into.
+     * @return A 2D array of Image objects.
+     */
     private Image[][] getSubImages(int resolution) {
         int pixelDim = width/resolution;
         int pixelPrHeight = height/pixelDim;
@@ -121,7 +169,7 @@ public class Image {
         for (int i = 0; i < resolution ; i++) {
             for (int j = 0; j < pixelPrHeight; j++) {
                 Color[][] subImage = new Color[pixelDim][pixelDim];
-                for (int x = 0; k < pixelDim; k++) {
+                for (int x = 0; x < pixelDim; x++) {
                     for (int y = 0; y < pixelDim; y++) {
                         subImage[y][x] = getPixel(x+resolution*j, y+resolution*i);
                     }
@@ -132,6 +180,10 @@ public class Image {
         return subImages;
     }
 
+    /**
+     * Calculates the brightness of the image.
+     * @return The brightness of the image.
+     */
     private float getbrightness(){
         float brightness = 0;
         for (int i = 0; i < width; i++) {
@@ -142,6 +194,11 @@ public class Image {
         return brightness/(255*width*height);
     }
 
+    /**
+     * Calculates the brightnessof each sub-image (pixel) of the image.
+     * @param resolution The resolution of the sub-images.
+     * @return A 2D array of floats, representing the brightness of each sub-image.
+     */
     public float[][] getbrightness(int resolution){
         Image[][] subImages = getSubImages(resolution);
         float[][] brightness = new float[resolution][height*resolution/width];
@@ -150,5 +207,6 @@ public class Image {
                 brightness[y][x] = subImages[y][x].getbrightness();
             }
         }
+        return brightness;
     }
 }
