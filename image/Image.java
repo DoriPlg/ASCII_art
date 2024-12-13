@@ -134,7 +134,7 @@ public class Image {
      * Buffers the image to the nearest power of 2.
      * @return The buffered image.
      */
-    public Image buffer(){
+    public Image getBuffered(){
         int buffH = bufferedHeight();
         int buffW = bufferedWidth();
 
