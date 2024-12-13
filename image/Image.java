@@ -184,7 +184,7 @@ public class Image {
      * Calculates the brightness of the image.
      * @return The brightness of the image.
      */
-    private float getbrightness(){
+    private float getPixelBrightness(){
         float brightness = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -199,12 +199,12 @@ public class Image {
      * @param resolution The resolution of the sub-images.
      * @return A 2D array of floats, representing the brightness of each sub-image.
      */
-    public float[][] getbrightness(int resolution){
+    public float[][] getImageBrightness(int resolution){
         Image[][] subImages = getSubImages(resolution);
         float[][] brightness = new float[resolution][height*resolution/width];
         for (int x = 0; x < resolution; x++) {
             for (int y = 0; y < (height * resolution / width); y++) {
-                brightness[y][x] = subImages[y][x].getbrightness();
+                brightness[y][x] = subImages[y][x].getPixelBrightness();
             }
         }
         return brightness;
