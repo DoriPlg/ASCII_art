@@ -11,6 +11,9 @@ import java.io.IOException;
  * @author Dan Nirel
  */
 public class Image {
+    private static final double RED_FACTOR = 0.2126;
+    private static final double GREEN_FACTOR = 0.7152;
+    private static final double BLUE_FACTOR = 0.0722;
 
     private final Color[][] pixelArray;
     private final int width;
@@ -28,7 +31,7 @@ public class Image {
 
 
         pixelArray = new Color[height][width];
-        for (int i = 0; i < height; i++) {
+        for (int i = 0; i < height; i++) { // ask in forum
             for (int j = 0; j < width; j++) {
                 pixelArray[i][j]=new Color(im.getRGB(j, i));
             }
@@ -124,10 +127,10 @@ public class Image {
      * @param color The color to calculate the gray code of.
      * @return The gray code of the given color.
      */
-    private static float grayCode(Color color) {
-        return color.getRed() * 0.2126f +
-                color.getGreen() * 0.7152f +
-                color.getBlue() * 0.0722f;
+    private static double grayCode(Color color) {
+        return color.getRed() * RED_FACTOR + // use constants
+                color.getGreen() * GREEN_FACTOR +
+                color.getBlue() * BLUE_FACTOR;
     }
 
     /**
@@ -146,14 +149,14 @@ public class Image {
             for (int x = 0; x < bufferedWidth(); x++) {
                 if (x < sideBuffer || x > sideBuffer + width ||
                         y < topBuffer || y > topBuffer + height) {
-                    newPixelArray[y][x]=new Color(255,255,255);
+                    newPixelArray[y][x]=new Color(255,255,255); // constant
                 }
                 else {
-                    newPixelArray[y][x] = getPixel(x+sideBuffer, y+sideBuffer);
+                    newPixelArray[y][x] = getPixel(x + sideBuffer, y + sideBuffer);
                 }
             }
         }
-        return new Image(newPixelArray,buffW,buffH);
+        return new Image(newPixelArray, buffW, buffH);
     }
 
     /**
@@ -171,7 +174,7 @@ public class Image {
                 Color[][] subImage = new Color[pixelDim][pixelDim];
                 for (int x = 0; x < pixelDim; x++) {
                     for (int y = 0; y < pixelDim; y++) {
-                        subImage[y][x] = getPixel(x+resolution*j, y+resolution*i);
+                        subImage[y][x] = getPixel(x+ resolution*j, y + resolution*i);
                     }
                 }
                 subImages[j][i]  = new Image(subImage,pixelDim,pixelDim);
@@ -184,8 +187,8 @@ public class Image {
      * Calculates the brightness of the image.
      * @return The brightness of the image.
      */
-    private float getPixelBrightness(){
-        float brightness = 0;
+    private double getImgaeBrightness(){
+        double brightness = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 brightness += grayCode(getPixel(i,j));
@@ -197,14 +200,14 @@ public class Image {
     /**
      * Calculates the brightnessof each sub-image (pixel) of the image.
      * @param resolution The resolution of the sub-images.
-     * @return A 2D array of floats, representing the brightness of each sub-image.
+     * @return A 2D array of doubles, representing the brightness of each sub-image.
      */
-    public float[][] getImageBrightness(int resolution){
+    public double[][] getImageBrightness(int resolution){
         Image[][] subImages = getSubImages(resolution);
-        float[][] brightness = new float[resolution][height*resolution/width];
+        double[][] brightness = new double[resolution][height*resolution/width];
         for (int x = 0; x < resolution; x++) {
             for (int y = 0; y < (height * resolution / width); y++) {
-                brightness[y][x] = subImages[y][x].getPixelBrightness();
+                brightness[y][x] = subImages[y][x].getImgaeBrightness();
             }
         }
         return brightness;
