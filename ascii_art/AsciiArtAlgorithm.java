@@ -9,7 +9,7 @@ import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
 public class AsciiArtAlgorithm {
-    private static final char[] defaultCharList = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private Image image;
     private int resolution;
     private SubImgCharMatcher charMatcher;
@@ -18,7 +18,7 @@ public class AsciiArtAlgorithm {
     public AsciiArtAlgorithm(String path_image) throws IOException {
         this.image = new Image(path_image);
         this.resolution = 2;
-        this.charMatcher= new SubImgCharMatcher(defaultCharList);
+        this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.outputMethod = new ConsoleAsciiOutput();
     }
 
