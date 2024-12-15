@@ -10,27 +10,48 @@ import image_char_matching.SubImgCharMatcher;
 
 public class AsciiArtAlgorithm {
     private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    private static final String UP = "up";
+    private static final String DOWN = "down";
+    private static final String ABS = "abs";
+
+
     private Image image;
     private int resolution;
     private SubImgCharMatcher charMatcher;
     private AsciiOutput outputMethod;
+    private boolean changeImage;
+    private boolean changeCharSet;
+    private double[][] brightness;
 
     public AsciiArtAlgorithm(String path_image) throws IOException {
         this.image = new Image(path_image);
         this.resolution = 2;
         this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.outputMethod = new ConsoleAsciiOutput();
+        this.changeImage = true;
+        this.changeCharSet = true;
     }
 
     public void loadImage(String path_image) throws IOException {
         this.image = new Image(path_image);
+        this.changeImage = true;
     }
 
-    public int changeResolution(boolean up){
-        resolution = up ? resolution*2 : resolution/2;
+    public int changeResolution(String direction) throws IllegalArgumentException {
+        if (direction.equals("up")){
+            this.resolution *= 2;
+        }
+        else if (direction.equals("down")){
+            this.resolution /= 2;
+        }
+        else {
+            throw new IllegalArgumentException("incorrect direction"); // TODO: change to a more specific exception
+        }
+        changeImage = true;      
         return resolution;
     }
 
+    // TODO: migrate to Shell
     private char[] getCharList(String charString) throws IllegalArgumentException {
         if (charString.equals("all")){
             char[] charList = new char[126-32+1];
@@ -69,14 +90,20 @@ public class AsciiArtAlgorithm {
     public void addChars(String charString){
         char[] charList = getCharList(charString);
         for (int i = 0; i < charList.length; i++) {
-            this.charMatcher.addChar(charList[i]);
+            if (!charMatcher.charInSet(charList[i])){
+                this.charMatcher.addChar(charList[i]);
+                changeCharSet = true;
+            }
         }
     }
 
     public void removeChars(String charString){
         char[] charList = getCharList(charString);
         for (int i = 0; i < charList.length; i++) {
-            this.charMatcher.removeChar(charList[i]);
+            if (charMatcher.charInSet(charList[i])){
+                this.charMatcher.removeChar(charList[i]);
+                changeCharSet = true;
+            }
         }
     }
 
@@ -91,15 +118,34 @@ public class AsciiArtAlgorithm {
     }
 
     public void changeRoundingMethod(String method) throws IllegalArgumentException {
-        this.charMatcher.changeRoundingMethod(method); // TODO: implement changeRoundingMethod
+        if (method.equals(UP)){
+            this.charMatcher.setTypeOfRound(charMatcher.ROUND_UP);
+        }
+        else if (method.equals(DOWN)){
+            this.charMatcher.setTypeOfRound(charMatcher.ROUND_DOWN);
+        }
+        else if (method.equals(ABS)){
+            this.charMatcher.setTypeOfRound(charMatcher.ROUND_ABS);
+        }
+        else {
+            throw new IllegalArgumentException("incorrect format");// TODO: migrate to Shell
+        }
     }
 
     public void doTheThing(){
-        double[][] brightness = image.getImageBrightness(resolution);
+        if (changeImage){
+            brightness = image.getImageBrightness(resolution);
+            changeImage = false;
+        }
+        if (changeCharSet){
+            charMatcher.normalize();
+            changeCharSet = false;
+        }
+        
         char[][] asciiArt = new char[brightness.length][brightness[0].length];
         for (int i = 0; i < brightness.length; i++) {
             for (int j = 0; j < brightness[0].length; j++) {
-                asciiArt[i][j] = charMatcher.getClosestChar(brightness[i][j]); // TODO: implement getClosestChar
+                asciiArt[i][j] = charMatcher.getCharByImageBrightness(brightness[i][j]);
             }
         }
         outputMethod.out(asciiArt);
