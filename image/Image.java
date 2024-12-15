@@ -32,7 +32,7 @@ public class Image {
     
     
             pixelArray = new Color[height][width];
-            for (int i = 0; i < height; i++) { // TODO: ask in forum
+            for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     pixelArray[i][j]=new Color(im.getRGB(j, i));
                 }
@@ -74,7 +74,7 @@ public class Image {
          * @return The Color object at the given coordinates.
          */
         public Color getPixel(int x, int y) {
-            return pixelArray[x][y];
+            return pixelArray[y][x];
         }
     
         /**
@@ -153,7 +153,7 @@ public class Image {
                         newPixelArray[y][x]= WHITE;
                 }
                 else {
-                    newPixelArray[y][x] = getPixel(x + sideBuffer, y + sideBuffer);
+                    newPixelArray[y][x] = getPixel(x + sideBuffer, y + topBuffer);
                 }
             }
         }
@@ -163,7 +163,7 @@ public class Image {
     /**
      * Splits the image into sub-images of a given resolution.
      * @param resolution The of parts to split the image width into.
-     * @return A 2D array of Image objects.
+     * @return A 2D array of Image objects. An array of rows!
      */
     private Image[][] getSubImages(int resolution) {
         int pixelDim = width/resolution;
@@ -175,7 +175,7 @@ public class Image {
                 Color[][] subImage = new Color[pixelDim][pixelDim];
                 for (int x = 0; x < pixelDim; x++) {
                     for (int y = 0; y < pixelDim; y++) {
-                        subImage[y][x] = getPixel(x+ resolution*j, y + resolution*i);
+                        subImage[y][x] = getPixel(x + resolution*i, y + resolution*j);
                     }
                 }
                 subImages[j][i]  = new Image(subImage,pixelDim,pixelDim);
@@ -201,7 +201,7 @@ public class Image {
     /**
      * Calculates the brightnessof each sub-image (pixel) of the image.
      * @param resolution The resolution of the sub-images.
-     * @return A 2D array of doubles, representing the brightness of each sub-image.
+     * @return A 2D array of doubles, representing the brightness of each sub-image. An array of rows!
      */
     public double[][] getImageBrightness(int resolution){
         Image[][] subImages = getSubImages(resolution);
