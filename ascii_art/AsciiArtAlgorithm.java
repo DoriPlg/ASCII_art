@@ -1,6 +1,7 @@
 package ascii_art;
 
 import java.io.IOException;
+import java.util.MissingFormatWidthException;
 
 import ascii_output.AsciiOutput;
 import ascii_output.ConsoleAsciiOutput;
@@ -10,9 +11,6 @@ import image_char_matching.SubImgCharMatcher;
 
 public class AsciiArtAlgorithm {
     private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    private static final String UP = "up";
-    private static final String DOWN = "down";
-    private static final String ABS = "abs";
 
 
     private Image image;
@@ -37,58 +35,17 @@ public class AsciiArtAlgorithm {
         this.changeImage = true;
     }
 
-    public int changeResolution(String direction) throws IllegalArgumentException {
-        if (direction.equals("up")){
-            this.resolution *= 2;
+    public int changeResolution(boolean up) throws BadResolutionException {
+        if (up && resolution * 2 > image.getWidth() ||
+         !up && resolution / 2 < Math.max(1,image.getWidth()/image.getHeight())){
+            throw new BadResolutionException("exceeding boundaries");
         }
-        else if (direction.equals("down")){
-            this.resolution /= 2;
-        }
-        else {
-            throw new IllegalArgumentException("incorrect direction"); // TODO: change to a more specific exception
-        }
+        this.resolution = up ? resolution*2 : resolution/2;
         changeImage = true;      
         return resolution;
     }
 
-    // TODO: migrate to Shell
-    private char[] getCharList(String charString) throws IllegalArgumentException {
-        if (charString.equals("all")){
-            char[] charList = new char[126-32+1];
-            for (int i = 0; i < charList.length; i++) {
-                charList[i] = (char)(32+i);
-            }
-            return charList;
-        }
-        else if (charString.equals("space")){
-            return new char[]{' '};
-        }
-        else if (charString.length() == 1){
-            return new char[]{charString.charAt(0)};
-        }
-        else if(charString.length() == 3 && charString.charAt(1) == '-'){
-            char start = charString.charAt(0);
-            char end = charString.charAt(2);
-            char[] charList = new char[Math.abs(start-end)+1];
-            if (start > end){
-                for (int i = end; i <= charList.length; i++) {
-                    charList[i] = (char)(end+i);
-                }
-            }
-            else {
-                for (int i = start; i <= charList.length; i++) {
-                    charList[i] = (char)(start+i);
-                }
-            }
-            return charList;
-        }
-        else {
-            throw new IllegalArgumentException("incorrect format");
-        }
-    }
-
-    public void addChars(String charString){
-        char[] charList = getCharList(charString);
+    public void addChars(char[] charList){
         for (int i = 0; i < charList.length; i++) {
             if (!charMatcher.charInSet(charList[i])){
                 this.charMatcher.addChar(charList[i]);
@@ -97,8 +54,7 @@ public class AsciiArtAlgorithm {
         }
     }
 
-    public void removeChars(String charString){
-        char[] charList = getCharList(charString);
+    public void removeChars(char[] charList){
         for (int i = 0; i < charList.length; i++) {
             if (charMatcher.charInSet(charList[i])){
                 this.charMatcher.removeChar(charList[i]);
@@ -117,22 +73,33 @@ public class AsciiArtAlgorithm {
         }
     }
 
-    public void changeRoundingMethod(String method) throws IllegalArgumentException {
-        if (method.equals(UP)){
+    /**
+     * Changes the rounding method used to match the brightness of the image to the characters
+     * @param method an integer that represents the rounding method
+     * 1: round up
+     * -1: round down
+     * 0: round to the closest
+     */
+    public void changeRoundingMethod(int method){
+        if (method >0){
             this.charMatcher.setTypeOfRound(charMatcher.ROUND_UP);
         }
-        else if (method.equals(DOWN)){
+        else if (method < 0){
             this.charMatcher.setTypeOfRound(charMatcher.ROUND_DOWN);
         }
-        else if (method.equals(ABS)){
+        else{
             this.charMatcher.setTypeOfRound(charMatcher.ROUND_ABS);
-        }
-        else {
-            throw new IllegalArgumentException("incorrect format");// TODO: migrate to Shell
         }
     }
 
-    public void doTheThing(){
+    public char[] getCharList() {
+        return charMatcher.getCharList();
+    }
+
+    public void doTheThing() throws TooSmallSetException{
+        if (charMatcher.getCharList().length < 2){
+            throw new TooSmallSetException();
+        }
         if (changeImage){
             brightness = image.getImageBrightness(resolution);
             changeImage = false;
@@ -149,5 +116,17 @@ public class AsciiArtAlgorithm {
             }
         }
         outputMethod.out(asciiArt);
+    }
+
+    class BadResolutionException extends Exception {
+        public BadResolutionException(String message) {
+            super(message);
+        }
+    }
+
+    class TooSmallSetException extends Exception {
+        public TooSmallSetException() {
+            super("Charset is too small.");
+        }
     }
 }
