@@ -14,151 +14,151 @@ public class Image {
     private static final double RED_FACTOR = 0.2126;
     private static final double GREEN_FACTOR = 0.7152;
     private static final double BLUE_FACTOR = 0.0722;
-        private static final Color WHITE = new Color(255, 255, 255);
-    
-        private final Color[][] pixelArray;
-        private final int width;
-        private final int height;
-    
-        /**
-         * Constructor for the Image class.
-         * @param filename The name of the file to be read.
-         * @throws IOException If the file is not found.
-         */
-        public Image(String filename) throws IOException {
-            BufferedImage im = ImageIO.read(new File(filename));
-            width = im.getWidth();
-            height = im.getHeight();
-    
-    
-            pixelArray = new Color[height][width];
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    pixelArray[i][j]=new Color(im.getRGB(j, i));
-                }
+    private static final Color WHITE = new Color(255, 255, 255);
+
+    private final Color[][] pixelArray;
+    private final int width;
+    private final int height;
+
+    /**
+     * Constructor for the Image class.
+     * @param filename The name of the file to be read.
+     * @throws IOException If the file is not found.
+     */
+    public Image(String filename) throws IOException {
+        BufferedImage im = ImageIO.read(new File(filename));
+        width = im.getWidth();
+        height = im.getHeight();
+
+
+        pixelArray = new Color[height][width];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                pixelArray[i][j]=new Color(im.getRGB(j, i));
             }
         }
-    
-        /**
-         * Constructor for the Image class.
-         * @param pixelArray A 2D array of Color objects.
-         * @param width The width of the image.
-         * @param height The height of the image.
-         */
-        public Image(Color[][] pixelArray, int width, int height) {
-            this.pixelArray = pixelArray;
-            this.width = width;
-            this.height = height;
-        }
-    
-        /**
-         * Returns the width of the image.
-         * @return The width of the image.
-         */
-        public int getWidth() {
-            return width;
-        }
-    
-        /**
-         * Returns the height of the image.
-         * @return The height of the image.
-         */
-        public int getHeight() {
-            return height;
-        }
-    
-        /**
-         * Returns the pixel at the given coordinates.
-         * @param x The x-coordinate of the pixel.
-         * @param y The y-coordinate of the pixel.
-         * @return The Color object at the given coordinates.
-         */
-        public Color getPixel(int x, int y) {
-            return pixelArray[y][x];
-        }
-    
-        /**
-         * Sets the pixel at the given coordinates to the given color.
-         * @param fileName The name of the file to be saved.
-         */
-        public void saveImage(String fileName){
-            // Initialize BufferedImage, assuming Color[][] is already properly populated.
-            BufferedImage bufferedImage = new BufferedImage(pixelArray[0].length, pixelArray.length,
-                    BufferedImage.TYPE_INT_RGB);
-            // Set each pixel of the BufferedImage to the color from the Color[][].
-            for (int x = 0; x < pixelArray.length; x++) {
-                for (int y = 0; y < pixelArray[x].length; y++) {
-                    bufferedImage.setRGB(y, x, pixelArray[x][y].getRGB());
-                }
-            }
-            File outputfile = new File(fileName+".jpeg");
-            try {
-                ImageIO.write(bufferedImage, "jpeg", outputfile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    
-        /**
-         * Calculates the width the image should be buffered to.
-         * @return The width the image should be buffered to.
-         */
-        private int bufferedWidth() {
-            int newWidth = 2;
-            while (newWidth < width) {
-                newWidth *= 2;
-            }
-            return newWidth;
-        }
-    
-        /**
-         * Calculates the height the image should be buffered to.
-         * @return The height the image should be buffered to.
-         */
-        private int bufferedHeight() {
-            int newHeight = 2;
-            while (newHeight < height) {
-                newHeight *= 2;
-            }
-            return newHeight;
-        }
-    
-        /**
-         * Calculates the gray code of a given color.
-         * @param color The color to calculate the gray code of.
-         * @return The gray code of the given color.
-         */
-        private static double grayCode(Color color) {
-            return color.getRed() * RED_FACTOR +
-                    color.getGreen() * GREEN_FACTOR +
-                    color.getBlue() * BLUE_FACTOR;
-        }
-    
-        /**
-         * Buffers the image to the nearest power of 2.
-         * @return The buffered image.
-         */
-        public Image getBuffered(){
-            int buffH = bufferedHeight();
-            int buffW = bufferedWidth();
-    
-            int topBuffer = (buffH-height)/2;
-            int sideBuffer = (buffW-width)/2;
-    
-            Color[][] newPixelArray = new Color[buffH][buffW];
-            for (int y = 0; y < bufferedHeight(); y++) {
-                for (int x = 0; x < bufferedWidth(); x++) {
-                    if (x < sideBuffer || x > sideBuffer + width ||
-                            y < topBuffer || y > topBuffer + height) {
-                        newPixelArray[y][x]= WHITE;
-                }
-                else {
-                    newPixelArray[y][x] = getPixel(x + sideBuffer, y + topBuffer);
-                }
-            }
-        }
-        return new Image(newPixelArray, buffW, buffH);
     }
+
+    /**
+     * Constructor for the Image class.
+     * @param pixelArray A 2D array of Color objects.
+     * @param width The width of the image.
+     * @param height The height of the image.
+     */
+    public Image(Color[][] pixelArray, int width, int height) {
+        this.pixelArray = pixelArray;
+        this.width = width;
+        this.height = height;
+    }
+
+    /**
+     * Returns the width of the image.
+     * @return The width of the image.
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Returns the height of the image.
+     * @return The height of the image.
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * Returns the pixel at the given coordinates.
+     * @param x The x-coordinate of the pixel.
+     * @param y The y-coordinate of the pixel.
+     * @return The Color object at the given coordinates.
+     */
+    public Color getPixel(int x, int y) {
+        return pixelArray[y][x];
+    }
+
+    /**
+     * Sets the pixel at the given coordinates to the given color.
+     * @param fileName The name of the file to be saved.
+     */
+    public void saveImage(String fileName){
+        // Initialize BufferedImage, assuming Color[][] is already properly populated.
+        BufferedImage bufferedImage = new BufferedImage(pixelArray[0].length, pixelArray.length,
+                BufferedImage.TYPE_INT_RGB);
+        // Set each pixel of the BufferedImage to the color from the Color[][].
+        for (int x = 0; x < pixelArray.length; x++) {
+            for (int y = 0; y < pixelArray[x].length; y++) {
+                bufferedImage.setRGB(y, x, pixelArray[x][y].getRGB());
+            }
+        }
+        File outputfile = new File(fileName+".jpeg");
+        try {
+            ImageIO.write(bufferedImage, "jpeg", outputfile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Calculates the width the image should be buffered to.
+     * @return The width the image should be buffered to.
+     */
+    private int bufferedWidth() {
+        int newWidth = 2;
+        while (newWidth < width) {
+            newWidth *= 2;
+        }
+        return newWidth;
+    }
+
+    /**
+     * Calculates the height the image should be buffered to.
+     * @return The height the image should be buffered to.
+     */
+    private int bufferedHeight() {
+        int newHeight = 2;
+        while (newHeight < height) {
+            newHeight *= 2;
+        }
+        return newHeight;
+    }
+
+    /**
+     * Calculates the gray code of a given color.
+     * @param color The color to calculate the gray code of.
+     * @return The gray code of the given color.
+     */
+    private static double grayCode(Color color) {
+        return color.getRed() * RED_FACTOR +
+                color.getGreen() * GREEN_FACTOR +
+                color.getBlue() * BLUE_FACTOR;
+    }
+
+    /**
+     * Buffers the image to the nearest power of 2.
+     * @return The buffered image.
+     */
+    public Image getBuffered(){
+        int buffH = bufferedHeight();
+        int buffW = bufferedWidth();
+
+        int topBuffer = (buffH-height)/2;
+        int sideBuffer = (buffW-width)/2;
+
+        Color[][] newPixelArray = new Color[buffH][buffW];
+        for (int y = 0; y < bufferedHeight(); y++) {
+            for (int x = 0; x < bufferedWidth(); x++) {
+                if (x < sideBuffer || x > sideBuffer + width ||
+                        y < topBuffer || y > topBuffer + height) {
+                    newPixelArray[y][x]= WHITE;
+            }
+            else {
+                newPixelArray[y][x] = getPixel(x + sideBuffer, y + topBuffer);
+            }
+        }
+    }
+    return new Image(newPixelArray, buffW, buffH);
+}
 
     /**
      * Splits the image into sub-images of a given resolution.

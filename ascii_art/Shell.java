@@ -27,14 +27,32 @@ public class Shell{
     
     private AsciiArtAlgorithm asciiArtAlgorithm;
 
+    /**
+     * Constructor for the Shell class.
+     * @param imageName the path to the image file.
+     * @throws IOException if the file cannot be opened.
+     */
     public Shell(String imageName) throws IOException {
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(imageName);
     }
 
+    /**
+     * Writes the standard error message for the shell.
+     * @param attempt the attempted action.
+     * @param reason the reason the action could not be completed.
+     * @return the error message.
+     */
     private String errWriter(String attempt, String reason){
         return "Did not "+attempt+" due to "+reason;
     }
 
+    /**
+     * parses the resolution command.
+     * @param commandString the command string given by the user.
+     * @return the new resolution.
+     * @throws IllegalArgumentException if the command is not formatted correctly.
+     * @throws BadResolutionException if the resolution is out of bounds.
+     */
     private int parseResolution(String commandString) throws IllegalArgumentException, BadResolutionException {
         if (commandString.equals(UP)){
             return asciiArtAlgorithm.changeResolution(true);
@@ -47,6 +65,12 @@ public class Shell{
         }
     }
 
+    /**
+     * Makes a char array from a string, in the format of the shell.
+     * @param charString the string to be converted.
+     * @return the char array.
+     * @throws IllegalArgumentException if the string is not formatted correctly.
+     */
     private char[] makeCharArray(String charString) throws IllegalArgumentException {
         if (charString.equals(ALL_CHARS)){
             char[] charList = new char[126-32+1];
@@ -82,14 +106,27 @@ public class Shell{
         }
     }
 
+    /**
+     * Parses the add command.
+     * @param commandString the command string given by the user.
+     * @throws IllegalArgumentException if the command is not formatted correctly.
+     */
     private void parseAdd(String commandString) throws IllegalArgumentException {
         asciiArtAlgorithm.addChars(makeCharArray(commandString));
     }
 
+    /**
+     * Parses the remove command.
+     * @param commandString the command string given by the user.
+     * @throws IllegalArgumentException if the command is not formatted correctly.
+     */
     private void parseRemove(String commandString) throws IllegalArgumentException {
         asciiArtAlgorithm.removeChars(makeCharArray(commandString));
     }
-    
+
+    /**
+     * Prints the characters in the char list.
+     */
     private void printChars(){
         char[] charList = asciiArtAlgorithm.getCharList();
         for (char c : charList) {
@@ -97,11 +134,20 @@ public class Shell{
         }
     }
     
+    /**
+     * Prompts the user for input and reads it.
+     * @return the user input split by spaces.
+     */
     private String[] readInput(){
         System.out.print(USER_INPUT_PROMPT);
         return KeyboardInput.readLine().split(" ");
     }
     
+    /**
+     * Parses the rounding method command.
+     * @param commandString the command string given by the user.
+     * @throws IllegalArgumentException if the command is not formatted correctly.
+     */
     private void parseRoundingMethod(String commandString) throws IllegalArgumentException {
         if (commandString.equals(UP)){
             asciiArtAlgorithm.changeRoundingMethod(1);
@@ -117,6 +163,11 @@ public class Shell{
         }
     }
 
+    /**
+     * Parses the output method command.
+     * @param commandString the command string given by the user.
+     * @throws IllegalArgumentException if the command is not formatted correctly.
+     */
     private void parseOutputMethod(String commandString) throws IllegalArgumentException {
         if (commandString.equals("console")){
             asciiArtAlgorithm.consoleOutput();
@@ -129,6 +180,12 @@ public class Shell{
         }
     }
 
+    /**
+     * Runs the shell, prompting the user for input and executing commands.
+     * The shell will run until the user types "exit".
+     * The shell will print an error message if the command is not recognized, 
+     * or if the command cannot be executed.
+     */
     public void run(){
         String[] commands = readInput();
         while (!(commands[0].equals(EXIT))){
@@ -194,6 +251,10 @@ public class Shell{
         }
     }
 
+    /**
+     * Main method for the shell.
+     * @param args the path to the image file.
+     */
     public static void main(String[] args) {
         if (args.length != 1){
             System.out.println("Usage: java Shell <image file>");

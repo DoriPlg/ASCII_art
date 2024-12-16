@@ -21,20 +21,36 @@ class AsciiArtAlgorithm {
     private boolean changeCharSet;
     private double[][] brightness;
 
+    /**
+     * Constructor for the AsciiArtAlgorithm class. Initializes the image, resolution, charMatcher, and outputMethod.
+     * Sets thee change flags to true.
+     * @param path_image the path to the image file.
+     * @throws IOException on file open error.
+     */
     public AsciiArtAlgorithm(String path_image) throws IOException {
-        this.image = new Image(path_image);
+        loadImage(path_image);
         this.resolution = 2;
         this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.outputMethod = new ConsoleAsciiOutput();
         this.changeImage = true;
-        this.changeCharSet = true;
     }
 
+    /**
+     * Changes the image to a new image.
+     * @param path_image the path to the new image file.
+     * @throws IOException on file open error.
+     */
     public void loadImage(String path_image) throws IOException {
         this.image = new Image(path_image);
         this.changeImage = true;
     }
 
+    /**
+     * Changes the resolution of the image.
+     * @param up true if the resolution should be increased, false if it should be decreased.
+     * @return the new resolution.
+     * @throws BadResolutionException if the resolution is out of bounds.
+     */
     public int changeResolution(boolean up) throws BadResolutionException {
         if (up && resolution * 2 > image.getWidth() ||
          !up && resolution / 2 < Math.max(1,image.getWidth()/image.getHeight())){
@@ -45,6 +61,11 @@ class AsciiArtAlgorithm {
         return resolution;
     }
 
+    /**
+     * Adds a character to the character set, if it is not already in the set.
+     * Sets the changeCharSet flag to true.
+     * @param charList the characters to be added.
+     */
     public void addChars(char[] charList){
         for (int i = 0; i < charList.length; i++) {
             if (!charMatcher.charInSet(charList[i])){
@@ -54,6 +75,11 @@ class AsciiArtAlgorithm {
         }
     }
 
+    /**
+     * Removes a character from the character set, if it is in the set.
+     * Sets the changeCharSet flag to true.
+     * @param charList the characters to be removed.
+     */
     public void removeChars(char[] charList){
         for (int i = 0; i < charList.length; i++) {
             if (charMatcher.charInSet(charList[i])){
@@ -63,10 +89,18 @@ class AsciiArtAlgorithm {
         }
     }
 
+    /**
+     * Sets the output method to html output, with the desired filename and font.
+     * @param filename the name of the file to be written.
+     * @param fontName the name of the font to be used.
+     */
     public void htmlOutput(String filename, String fontName){
         this.outputMethod = new HtmlAsciiOutput(filename, fontName);
     }
 
+    /**
+     * Sets the output method to console output.
+     */
     public void consoleOutput(){
         if (!(outputMethod instanceof ConsoleAsciiOutput)){
             this.outputMethod = new ConsoleAsciiOutput();
@@ -92,10 +126,19 @@ class AsciiArtAlgorithm {
         }
     }
 
+    /**
+     * Gets the character list currently in use.
+     * @return the character list.
+     */
     public char[] getCharList() {
         return charMatcher.getCharList();
     }
 
+    /**
+     * The main method of the class, with the current settings, generates the ascii art and outputs it.
+     * Takes care to only recalculate the brightness if the image has changed, and to only normalize the character set if it has changed.
+     * @throws TooSmallSetException if the character set is too small.
+     */
     public void doTheThing() throws TooSmallSetException{
         if (charMatcher.getCharList().length < 2){
             throw new TooSmallSetException();
@@ -118,12 +161,18 @@ class AsciiArtAlgorithm {
         outputMethod.out(asciiArt);
     }
 
+    /**
+     * Exception for when the resolution is out of bounds.
+     */
     class BadResolutionException extends Exception {
         public BadResolutionException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Exception for when the character set is too small.
+     */
     class TooSmallSetException extends Exception {
         public TooSmallSetException() {
             super("Charset is too small.");
