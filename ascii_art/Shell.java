@@ -2,12 +2,10 @@ package ascii_art;
 
 import java.io.IOException;
 
-import javax.print.DocFlavor.STRING;
-
 import ascii_art.AsciiArtAlgorithm.BadResolutionException;
 import ascii_art.AsciiArtAlgorithm.TooSmallSetException;
 
-class Shell{
+public class Shell{
     private static final String RUN = "asciiArt";
     private static final String UP = "up";
     private static final String DOWN = "down";
@@ -49,7 +47,7 @@ class Shell{
         }
     }
 
-    private char[] getCharList(String charString) throws IllegalArgumentException {
+    private char[] makeCharArray(String charString) throws IllegalArgumentException {
         if (charString.equals(ALL_CHARS)){
             char[] charList = new char[126-32+1];
             for (char i = 0; i < charList.length; i++) {
@@ -85,11 +83,11 @@ class Shell{
     }
 
     private void parseAdd(String commandString) throws IllegalArgumentException {
-        asciiArtAlgorithm.addChars(getCharList(commandString));
+        asciiArtAlgorithm.addChars(makeCharArray(commandString));
     }
 
     private void parseRemove(String commandString) throws IllegalArgumentException {
-        asciiArtAlgorithm.removeChars(getCharList(commandString));
+        asciiArtAlgorithm.removeChars(makeCharArray(commandString));
     }
     
     private void printChars(){

@@ -9,7 +9,7 @@ import ascii_output.HtmlAsciiOutput;
 import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
-public class AsciiArtAlgorithm {
+class AsciiArtAlgorithm {
     private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 
