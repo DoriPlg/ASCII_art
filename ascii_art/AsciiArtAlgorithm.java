@@ -67,12 +67,9 @@ class AsciiArtAlgorithm {
      * @param charList the characters to be added.
      */
     public void addChars(char[] charList){
-        for (int i = 0; i < charList.length; i++) {
-            if (!charMatcher.charInSet(charList[i])){
-                this.charMatcher.addChar(charList[i]);
-                changeCharSet = true;
-            }
-        }
+        int pre_size = charList.getSetSize();
+        for (int i = 0; i < charList.length; i++) charMatcher.addChar(charList[i]);
+        if (pre_size != charList.getSetSize()) changeCharSet = true;
     }
 
     /**
@@ -81,12 +78,9 @@ class AsciiArtAlgorithm {
      * @param charList the characters to be removed.
      */
     public void removeChars(char[] charList){
-        for (int i = 0; i < charList.length; i++) {
-            if (charMatcher.charInSet(charList[i])){
-                this.charMatcher.removeChar(charList[i]);
-                changeCharSet = true;
-            }
-        }
+        int pre_size = charList.getSetSize();
+        for (int i = 0; i < charList.length; i++) charMatcher.removeChar(charList[i]);
+        if (pre_size != charList.getSetSize()) changeCharSet = true;
     }
 
     /**
