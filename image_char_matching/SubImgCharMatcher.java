@@ -20,9 +20,15 @@ public class SubImgCharMatcher {
     private final HashMap<Character,Double> normalizedBrightness;
     private static final int START_MIN = 1;
     private static final int START_MAX = 0;
+    private static final int defaulLowerASCII = 32;
+    private static final int defaultUpperASCII = 126;
+    private static final boolean REMOVED = true;
+
+    private String roundType ;
     private double[] sortedBrightness;
     private double minBrightness ;
     private double maxBrightness ;
+    private String typeOfRound;
 
 
     /**
@@ -37,6 +43,7 @@ public class SubImgCharMatcher {
         this.minMaxBrightness = new TreeSet<>();
         this.normalizedBrightness = new HashMap<>();
         this.charConverter = new CharConverter();
+        initializeStorageMap();
     }
 
     /**
@@ -47,36 +54,33 @@ public class SubImgCharMatcher {
      * with the lowest ASCII value.
      */
     public char getCharByImageBrightness(double brightness){
-        for (char c: charSet){
-            convertChar(c);
+        char fittedChar = defaultUpperASCII+1 ;
+        for (char c: charSet) {
+            double rounded = round(normalizedBrightness.get(c));
+            if (rounded == brightness && rounded<fittedChar) {
+                fittedChar = c;
+            }
         }
-        return 'c';
+        return fittedChar;
     }
+
 
     /**
      * This method adds a char to our set
      */
     public void addChar(char c){
-        if(charSet.add(c)){
-            convertChar(c);
-        }
+        charSet.add(c);
+        updateMinMax(c,!REMOVED);
     }
 
     /**
      * This method removes a char to our set
      */
     public void removeChar(char c){
-        boolean removed;
-        if(!charSet.remove(c)){
-            removed = false; // should take care of trying to remove inexistent element ? remove won't throw exception
-        }
-        else{
-            removed = true;
-            updateMinMax(c,removed);
-            minMaxBrightness.remove(brightnessMap.get(c));
-            normalizedBrightness.remove(c);
-            // do not remove from brightnessMap so we have it stored anyway cause it does not change only depends on the number of pixels
-        }
+        updateMinMax(c,REMOVED);
+        normalizedBrightness.remove(c);
+        // do not remove from brightnessMap so we have it stored anyway cause it does not change only depends on the number of pixels
+
     }
 
     /**
@@ -109,30 +113,57 @@ public class SubImgCharMatcher {
         }
         brightnessValue = brightnessCounter/(double)defaultPixelNumber;
         brightnessMap.put(c,brightnessValue); // brightness storage
-        updateMinMax(c,false); // brightness values hierarchy
-        normalizeBrightness();
+//        updateMinMax(c,false); // brightness values hierarchy
+//        normalizeBrightness();
     }
+
+
+    /**
+     * Allows ASCII_art to define the way of rounding the brightness for each char
+     */
+    public void setTypeOfRound(String typeOfRound){ // default abs
+        this.roundType = typeOfRound;
+    }
+
+
+    /**
+     * Allows ASCII_art to check whether a given char is already in our normalized set of chars
+     */
+    public boolean charInSet(char c){
+        return normalizedBrightness.get(c)!= null;
+    }
+
+    /**
+     * Returns reference to our set of chars
+     */
+    public Set<Character> getCharList() {
+        return charSet;
+    }
+
 
     /**
      * Min max brightness update
      */
     private void updateMinMax(char c,boolean remove){
+        double brightness = brightnessMap.get(c);
         if(!remove){
             minMaxBrightness.add(brightnessMap.get(c));
         }
         else{
-            minMaxBrightness.remove(brightnessMap.get(c));
+            minMaxBrightness.remove(brightness);
         }
-        this.minBrightness = minMaxBrightness.first();
-        this.maxBrightness = minMaxBrightness.last();
+        if(brightness< minBrightness || brightness> maxBrightness){
+            this.minBrightness = minMaxBrightness.first();
+            this.maxBrightness = minMaxBrightness.last();
+        }
     }
 
     /**
      * Linear normalization of the brightness of the chars
      */
-    private void normalizeBrightness(){
+    public void normalizeBrightness(){
         double newBrightness;
-        for(char c : charSet){
+        for(char c : charSet){ // sa nu treci peste new
             newBrightness = calculateLinearNormalization(c);
             normalizedBrightness.put(c,newBrightness);
         }
@@ -147,4 +178,34 @@ public class SubImgCharMatcher {
         double denominator = this.maxBrightness - this.minBrightness;
         return numerator/ denominator;
     }
+
+    /**
+     * Initializes the map with all the possible values of chars from ASCII
+     */
+    private void initializeStorageMap() {
+        for(char i = defaulLowerASCII;i<defaultUpperASCII+1;i++){
+            convertChar(i);
+        }
+    }
+
+
+    /**
+     * Rounds the brightness we look for by the chosen method
+     */
+    private double round(Double brightness) {
+        double roundedBrightness;
+        switch(typeOfRound){
+            case "up":
+                roundedBrightness = Math.ceil(brightness);
+                break;
+            case "down":
+                roundedBrightness= Math.floor(brightness);
+                break;
+            default:
+                roundedBrightness = Math.abs(brightness);
+                break;
+        }
+        return roundedBrightness;
+    }
+
 }
