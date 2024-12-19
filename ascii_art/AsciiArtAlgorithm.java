@@ -2,6 +2,7 @@ package ascii_art;
 
 import java.io.IOException;
 import java.util.MissingFormatWidthException;
+import java.util.Set;
 
 import ascii_output.AsciiOutput;
 import ascii_output.ConsoleAsciiOutput;
@@ -67,9 +68,9 @@ class AsciiArtAlgorithm {
      * @param charList the characters to be added.
      */
     public void addChars(char[] charList){
-        int pre_size = charList.getSetSize();
+        int pre_size = charMatcher.getCharSet().size();
         for (int i = 0; i < charList.length; i++) charMatcher.addChar(charList[i]);
-        if (pre_size != charList.getSetSize()) changeCharSet = true;
+        if (pre_size !=  charMatcher.getCharSet().size()) changeCharSet = true;
     }
 
     /**
@@ -78,9 +79,9 @@ class AsciiArtAlgorithm {
      * @param charList the characters to be removed.
      */
     public void removeChars(char[] charList){
-        int pre_size = charList.getSetSize();
+        int pre_size = charMatcher.getCharSet().size();
         for (int i = 0; i < charList.length; i++) charMatcher.removeChar(charList[i]);
-        if (pre_size != charList.getSetSize()) changeCharSet = true;
+        if (pre_size != charMatcher.getCharSet().size()) changeCharSet = true;
     }
 
     /**
@@ -124,8 +125,8 @@ class AsciiArtAlgorithm {
      * Gets the character list currently in use.
      * @return the character list.
      */
-    public char[] getCharList() {
-        return charMatcher.getCharList();
+    public Set<Character> getCharList() {
+        return charMatcher.getCharSet();
     }
 
     /**
@@ -134,7 +135,7 @@ class AsciiArtAlgorithm {
      * @throws TooSmallSetException if the character set is too small.
      */
     public void doTheThing() throws TooSmallSetException{
-        if (charMatcher.getCharList().length < 2){
+        if (charMatcher.getCharSet().size() < 2){
             throw new TooSmallSetException();
         }
         if (changeImage){
@@ -142,7 +143,7 @@ class AsciiArtAlgorithm {
             changeImage = false;
         }
         if (changeCharSet){
-            charMatcher.normalize();
+            charMatcher.normalizeBrightness();
             changeCharSet = false;
         }
         

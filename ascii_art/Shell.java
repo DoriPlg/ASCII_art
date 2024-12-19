@@ -128,8 +128,7 @@ public class Shell{
      * Prints the characters in the char list.
      */
     private void printChars(){
-        char[] charList = asciiArtAlgorithm.getCharList();
-        for (char c : charList) {
+        for (char c : asciiArtAlgorithm.getCharList()) {
             System.out.print(c+" ");
         }
     }

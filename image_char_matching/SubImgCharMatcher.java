@@ -129,6 +129,7 @@ public class SubImgCharMatcher {
     /**
      * Allows ASCII_art to check whether a given char is already in our normalized set of chars
      */
+    // TODO: Talk if should be removed, due  to no use
     public boolean charInSet(char c){
         return normalizedBrightness.get(c)!= null;
     }
@@ -136,7 +137,7 @@ public class SubImgCharMatcher {
     /**
      * Returns reference to our set of chars
      */
-    public Set<Character> getCharList() {
+    public Set<Character> getCharSet() {
         return charSet;
     }
 
