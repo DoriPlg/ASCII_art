@@ -25,11 +25,11 @@ class AsciiArtAlgorithm {
     /**
      * Constructor for the AsciiArtAlgorithm class. Initializes the image, resolution, charMatcher, and outputMethod.
      * Sets thee change flags to true.
-     * @param path_image the path to the image file.
+     * @param pathImage the path to the image file.
      * @throws IOException on file open error.
      */
-    public AsciiArtAlgorithm(String path_image) throws IOException {
-        loadImage(path_image);
+    public AsciiArtAlgorithm(String pathImage) throws IOException {
+        loadImage(pathImage);
         this.resolution = 2;
         this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.outputMethod = new ConsoleAsciiOutput();
@@ -38,11 +38,11 @@ class AsciiArtAlgorithm {
 
     /**
      * Changes the image to a new image.
-     * @param path_image the path to the new image file.
+     * @param pathImage the path to the new image file.
      * @throws IOException on file open error.
      */
-    public void loadImage(String path_image) throws IOException {
-        this.image = new Image(path_image);
+    private void loadImage(String pathImage) throws IOException {
+        this.image =Image.getBuffered( new Image(pathImage));
         this.changeImage = true;
     }
 
@@ -104,16 +104,16 @@ class AsciiArtAlgorithm {
 
     /**
      * Changes the rounding method used to match the brightness of the image to the characters
-     * @param method an integer that represents the rounding method
+     * @param bias an integer that represents the rounding method
      * 1: round up
      * -1: round down
      * 0: round to the closest
      */
-    public void changeRoundingMethod(int method){
-        if (method >0){
+    public void changeRoundingMethod(int bias){
+        if (bias >0){
             this.charMatcher.setTypeOfRound(charMatcher.ROUND_UP);
         }
-        else if (method < 0){
+        else if (bias < 0){
             this.charMatcher.setTypeOfRound(charMatcher.ROUND_DOWN);
         }
         else{
@@ -134,9 +134,9 @@ class AsciiArtAlgorithm {
      * Takes care to only recalculate the brightness if the image has changed, and to only normalize the character set if it has changed.
      * @throws TooSmallSetException if the character set is too small.
      */
-    public void doTheThing() throws TooSmallSetException{
+    public void asciiArt() throws TooSmallSetException{
         if (charMatcher.getCharSet().size() < 2){
-            throw new TooSmallSetException();
+            throw new TooSmallSetException(); // TODO: check if two with same brightness
         }
         if (changeImage){
             brightness = image.getImageBrightness(resolution);
