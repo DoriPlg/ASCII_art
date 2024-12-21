@@ -188,7 +188,17 @@ public class Shell{
     public void run(){
         String[] commands = readInput();
         while (!(commands[0].equals(EXIT))){
-            if (commands[0].equals(CHARS)){
+            runCommand(commands);
+            commands = readInput();
+        }
+    }
+
+    /**
+     * Runs a single command.
+     * @param commands the command to be executed
+     */
+     private void runCommand(String[] commands){
+        if (commands[0].equals(CHARS)){
                 printChars();
             }
             else if (commands[0].equals(ADD)){
@@ -246,9 +256,7 @@ public class Shell{
             else {
                 System.out.println(errWriter("execute","incorrect command."));
             }  
-            commands = readInput();
         }
-    }
 
     /**
      * Main method for the shell.
