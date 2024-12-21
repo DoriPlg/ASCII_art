@@ -1,9 +1,6 @@
 package image_char_matching;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * This class is going to match an ASCII character to a sub image
@@ -13,22 +10,23 @@ import java.util.TreeSet;
 public class SubImgCharMatcher {
 
 
-    private final CharConverter charConverter ;
     private final Set<Character> charSet ; //vs treeset
     private final HashMap<Character,Double> brightnessMap ;
     private final TreeSet<Double> minMaxBrightness ;
-    private final HashMap<Character,Double> normalizedBrightness;
+    private final SortedMap<Double,Character> normalizedBrightness;
     private static final int START_MIN = 1;
     private static final int START_MAX = 0;
     private static final int defaulLowerASCII = 32;
     private static final int defaultUpperASCII = 126;
     private static final boolean REMOVED = true;
 
-    private String roundType ;
-    private double[] sortedBrightness;
     private double minBrightness ;
     private double maxBrightness ;
     private String typeOfRound;
+
+    public static final String ROUND_UP = "up";
+    public static final String ROUND_DOWN = "down";
+    public static final String ROUND_ABS = "abs";
 
 
     /**
@@ -41,23 +39,21 @@ public class SubImgCharMatcher {
         this.charSet = new HashSet<Character>();
         this.brightnessMap = new HashMap<>();
         this.minMaxBrightness = new TreeSet<>();
-        this.normalizedBrightness = new HashMap<>();
-        this.charConverter = new CharConverter();
+        this.normalizedBrightness = new TreeMap<>();
         initializeStorageMap();
     }
 
     /**
      * Given a value of brightness for the sub image, the method will
-     * return the char from the set of chars, with the closest brightness
-     * in the absolute value to the given brightness.
+     * return the char from the set of chars, with the closest rounded brightness
      * Given a few chars with the same brightness this method will return the one
      * with the lowest ASCII value.
      */
     public char getCharByImageBrightness(double brightness){
         char fittedChar = defaultUpperASCII+1 ;
+        double rounded =  round(brightness);
         for (char c: charSet) {
-            double rounded = round(normalizedBrightness.get(c));
-            if (rounded == brightness && rounded<fittedChar) {
+            if (normalizedBrightness.get(rounded)<fittedChar) {
                 fittedChar = c;
             }
         }
@@ -102,8 +98,8 @@ public class SubImgCharMatcher {
     private void convertChar(char c) {
         double brightnessCounter = 0;
         double brightnessValue ;
-        int defaultPixelNumber = charConverter.DEFAULT_PIXEL_RESOLUTION;
-        boolean[][] charArr = charConverter.convertToBoolArray(c);
+        int defaultPixelNumber = CharConverter.DEFAULT_PIXEL_RESOLUTION;
+        boolean[][] charArr = CharConverter.convertToBoolArray(c);
         for(int i = 0;i<defaultPixelNumber;i++){
             for(int j=0;j<defaultPixelNumber;j++){
                 if (charArr[i][j]) {
@@ -122,17 +118,9 @@ public class SubImgCharMatcher {
      * Allows ASCII_art to define the way of rounding the brightness for each char
      */
     public void setTypeOfRound(String typeOfRound){ // default abs
-        this.roundType = typeOfRound;
+        this.typeOfRound = typeOfRound;
     }
 
-
-    /**
-     * Allows ASCII_art to check whether a given char is already in our normalized set of chars
-     */
-    // TODO: Talk if should be removed, due  to no use
-    public boolean charInSet(char c){
-        return normalizedBrightness.get(c)!= null;
-    }
 
     /**
      * Returns reference to our set of chars
@@ -166,7 +154,14 @@ public class SubImgCharMatcher {
         double newBrightness;
         for(char c : charSet){ // sa nu treci peste new
             newBrightness = calculateLinearNormalization(c);
-            normalizedBrightness.put(c,newBrightness);
+            if(normalizedBrightness.containsKey(newBrightness)){
+                if(normalizedBrightness.get(newBrightness)>c){
+                    normalizedBrightness.put(newBrightness, c);
+                }
+            }
+            else {
+                normalizedBrightness.put(newBrightness, c);
+            }
         }
     }
 
@@ -195,15 +190,19 @@ public class SubImgCharMatcher {
      */
     private double round(Double brightness) {
         double roundedBrightness;
-        switch(typeOfRound){
-            case "up":
-                roundedBrightness = Math.ceil(brightness);
+        double upperEstimation =  normalizedBrightness.headMap(brightness).firstKey();
+        double lowerEstimation = normalizedBrightness.tailMap(brightness).lastKey();
+        double upperDelta = Math.abs(brightness- upperEstimation);
+        double lowerDelta = Math.abs(brightness-lowerEstimation);
+        switch(this.typeOfRound){
+            case ROUND_UP:
+                roundedBrightness = upperEstimation;
                 break;
-            case "down":
-                roundedBrightness= Math.floor(brightness);
+            case ROUND_DOWN:
+                roundedBrightness= lowerEstimation;
                 break;
             default:
-                roundedBrightness = Math.abs(brightness);
+                roundedBrightness = (upperDelta<lowerDelta)? upperEstimation:lowerEstimation;
                 break;
         }
         return roundedBrightness;
