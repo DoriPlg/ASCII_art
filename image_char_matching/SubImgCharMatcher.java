@@ -171,16 +171,13 @@ public class SubImgCharMatcher {
                 normalizedBrightness.put(newBrightness, c);
             }
         }
-
-        // For debugging purposes
-        for(double d: normalizedBrightness.keySet()){
-            System.out.println(d+" "+normalizedBrightness.get(d));
-        }
     }
 
     /**
      * Returns the result of applying the newCharBrightness formula on our
      * initial values
+     * @param c the char we want to calculate the new brightness for
+     * @return the new brightness
      */
     private double calculateLinearNormalization(char c){
         double numerator = brightnessMap.get(c) - this.minBrightness;
@@ -200,14 +197,16 @@ public class SubImgCharMatcher {
 
     /**
      * Rounds the brightness we look for by the chosen method
+     * @param brightness the brightness we want to round
+     * @return the rounded brightness
      */
     private double round(Double brightness) {
         if (normalizedBrightness.containsKey(brightness)){
             return brightness;
         }
         double roundedBrightness;
-        double upperEstimation =  normalizedBrightness.headMap(brightness).firstKey();
-        double lowerEstimation = normalizedBrightness.tailMap(brightness).lastKey();
+        double upperEstimation =  normalizedBrightness.headMap(brightness).lastKey();
+        double lowerEstimation = normalizedBrightness.tailMap(brightness).firstKey();
         switch(this.typeOfRound){
             case ROUND_UP:
                 roundedBrightness = upperEstimation;

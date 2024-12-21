@@ -84,11 +84,8 @@ public class Shell{
             char start = charString.charAt(0);
             char end = charString.charAt(2);
             char[] charList = new char[Math.abs(start-end)+1];
-            if (start > end){
-                for (char i = end; i <= charList.length; i++) { charList[i] = (char)(end+i); }
-            }
-            else {
-                for (char i = start; i <= charList.length; i++) { charList[i] = (char)(start+i);}
+            for (char i = 0; i < charList.length; i++) {
+                 charList[i] = (char)((start > end ? end: start) + i); 
             }
             return charList;
         }
@@ -242,13 +239,6 @@ public class Shell{
             System.out.println("Could not open file.");
             return;
         }
-        // shell.run();
-
-        // For debugging purposes
-        shell.parseRemove("all");
-        shell.parseAdd("m");
-        shell.parseAdd("o");
-        shell.printChars();
-        shell.runCommand(new String[]{RUN});
+        shell.run();
     }
 }

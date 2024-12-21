@@ -148,8 +148,8 @@ public class Image {
         Color[][] newPixelArray = new Color[buffH][buffW];
         for (int y = 0; y < image.bufferedHeight(); y++) {
             for (int x = 0; x < image.bufferedWidth(); x++) {
-                if (x < sideBuffer || x > sideBuffer + image.getWidth() ||
-                        y < topBuffer || y > topBuffer + image.getHeight()) {
+                if (x < sideBuffer || x >= sideBuffer + image.getWidth() ||
+                        y < topBuffer || y >= topBuffer + image.getHeight()) {
                     newPixelArray[y][x]= WHITE;
                 }
                 else {
@@ -209,11 +209,6 @@ public class Image {
         for (int x = 0; x < resolution; x++) {
             for (int y = 0; y < (height * resolution / width); y++) {
                 brightness[y][x] = subImages[y][x].getPixelBrightness();
-
-
-                
-                // For debugging purposes
-                subImages[y][x].saveImage("("+x+"_"+y+").jpeg");
             }
         }
         return brightness;

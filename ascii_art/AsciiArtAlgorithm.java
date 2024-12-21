@@ -33,6 +33,7 @@ class AsciiArtAlgorithm {
         this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.outputMethod = new ConsoleAsciiOutput();
         this.changeImage = true;
+        this.changeCharSet = true;
     }
 
     /**
@@ -138,23 +139,22 @@ class AsciiArtAlgorithm {
             throw new TooSmallSetException(); // TODO: check if two with same brightness
         }
         if (changeImage){
+            System.out.println("Calculating brightness");
             brightness = image.getImageBrightness(resolution);
             changeImage = false;
         }
         if (changeCharSet){
+            System.out.println("Normalizing chars");
             charMatcher.normalizeBrightness();
             changeCharSet = false;
         }
+
+
         
         char[][] asciiArt = new char[brightness.length][brightness[0].length];
         for (int i = 0; i < brightness.length; i++) {
             for (int j = 0; j < brightness[0].length; j++) {
                 asciiArt[i][j] = charMatcher.getCharByImageBrightness(brightness[i][j]);
-                
-                
-                // For debugging purposes
-                System.out.println("pixel ("+ i+","+ j+") brightness: "+ brightness[i][j]+
-                "   Matched with char: "+asciiArt[i][j]);
             }
         }
         outputMethod.out(asciiArt);
