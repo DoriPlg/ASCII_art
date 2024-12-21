@@ -23,6 +23,7 @@ public class Shell{
     private static final String USER_INPUT_PROMPT = ">>> ";
     private static final String HTML_OUTPUT_FILE = "out.html";
     private static final String HTML_FONT = "Courier New";
+    private static final String CHG_RUND_MTD = "change rounding method";
     
     
     private AsciiArtAlgorithm asciiArtAlgorithm;
@@ -74,36 +75,24 @@ public class Shell{
     private char[] makeCharArray(String charString) throws IllegalArgumentException {
         if (charString.equals(ALL_CHARS)){
             char[] charList = new char[126-32+1];
-            for (char i = 0; i < charList.length; i++) {
-                charList[i] = (char)(32+i);
-            }
+            for (char i = 0; i < charList.length; i++) { charList[i] = (char)(32+i);}
             return charList;
         }
-        else if (charString.equals(SPACE_KEY)){
-            return new char[]{' '};
-        }
-        else if (charString.length() == 1){
-            return new char[]{charString.charAt(0)};
-        }
+        else if (charString.equals(SPACE_KEY)){ return new char[]{' '};}
+        else if (charString.length() == 1){ return new char[]{charString.charAt(0)};}
         else if(charString.length() == 3 && charString.charAt(1) == '-'){
             char start = charString.charAt(0);
             char end = charString.charAt(2);
             char[] charList = new char[Math.abs(start-end)+1];
             if (start > end){
-                for (char i = end; i <= charList.length; i++) {
-                    charList[i] = (char)(end+i);
-                }
+                for (char i = end; i <= charList.length; i++) { charList[i] = (char)(end+i); }
             }
             else {
-                for (char i = start; i <= charList.length; i++) {
-                    charList[i] = (char)(start+i);
-                }
+                for (char i = start; i <= charList.length; i++) { charList[i] = (char)(start+i);}
             }
             return charList;
         }
-        else {
-            throw new IllegalArgumentException(INCORRECT_FORMAT);
-        }
+        else { throw new IllegalArgumentException(INCORRECT_FORMAT); }
     }
 
     /**
@@ -197,66 +186,43 @@ public class Shell{
      * Runs a single command.
      * @param commands the command to be executed
      */
-     private void runCommand(String[] commands){
-        if (commands[0].equals(CHARS)){
-                printChars();
+    private void runCommand(String[] commands){
+        if (commands[0].equals(CHARS)){ printChars(); }
+        else if (commands[0].equals(ADD)){ try { parseAdd(commands[1]); }
+            catch (IllegalArgumentException e){ 
+                System.out.println(errWriter(commands[0],e.getMessage())); }}
+        else if (commands[0].equals(REMOVE)){ try { parseRemove(commands[1]); }
+            catch (IllegalArgumentException e){
+                System.out.println(errWriter(commands[0],e.getMessage()));}}
+        else if (commands[0].equals(RESOLUTION)){
+            try {
+                int resolution = parseResolution(commands[1]);
+                System.out.println("Resolution set to "+resolution);
             }
-            else if (commands[0].equals(ADD)){
-                try {
-                    parseAdd(commands[1]);
-                }
-                catch (IllegalArgumentException e){
-                    System.out.println(errWriter(commands[0],e.getMessage()));
-                }
+            catch (IllegalArgumentException | BadResolutionException e){
+                System.out.println(
+                    errWriter("change resolution",e.getMessage()));}}
+        else if (commands[0].equals(ROUND)){
+            try { parseRoundingMethod(commands[1]);}
+            catch (IllegalArgumentException e){
+                System.out.println(errWriter(CHG_RUND_MTD,e.getMessage()));
             }
-            else if (commands[0].equals(REMOVE)){
-                try {
-                    parseRemove(commands[1]);
-                }
-                catch (IllegalArgumentException e){
-                    System.out.println(errWriter(commands[0],e.getMessage()));
-                }
-            }
-            else if (commands[0].equals(RESOLUTION)){
-                try {
-                    int resolution = parseResolution(commands[1]);
-                    System.out.println("Resolution set to "+resolution);
-                }
-                catch (IllegalArgumentException | BadResolutionException e){
-                    System.out.println(errWriter("change resolution",e.getMessage()));
-                }
-            }
-            else if (commands[0].equals(ROUND)){
-                try {
-                    parseRoundingMethod(commands[1]);
-                }
-                catch (IllegalArgumentException e){
-                    System.out.println(errWriter("change rounding method",e.getMessage()));
-                }
-            }
-            else if (commands[0].equals(OUTPUT)){
-                try {
-                    if (commands.length < 2){
-                        throw new IllegalArgumentException(INCORRECT_FORMAT);
-                    }
-                    parseOutputMethod(commands[1]);
-                }
-                catch (IllegalArgumentException e){
-                    System.out.println(errWriter("change output",e.getMessage()));
-                }
-            }
-            else if (commands[0].equals(RUN)){
-                try{
-                    asciiArtAlgorithm.doTheThing();
-                }
-                catch (TooSmallSetException e){
-                    System.out.println("Did not execute. "+e.getMessage());
-                }
-            }
-            else {
-                System.out.println(errWriter("execute","incorrect command."));
-            }  
         }
+        else if (commands[0].equals(OUTPUT)){
+            try {
+                if (commands.length < 2){
+                    throw new IllegalArgumentException(INCORRECT_FORMAT);}
+                parseOutputMethod(commands[1]);}
+            catch (IllegalArgumentException e){
+                System.out.println(errWriter("change output",e.getMessage()));
+            }}
+        else if (commands[0].equals(RUN)){
+            try{ asciiArtAlgorithm.asciiArt();}
+            catch (TooSmallSetException e){ 
+                System.out.println("Did not execute. "+e.getMessage());}
+        }
+        else { System.out.println(errWriter("execute","incorrect command."));}  
+    }
 
     /**
      * Main method for the shell.
