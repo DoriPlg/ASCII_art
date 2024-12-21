@@ -31,6 +31,8 @@ public class SubImgCharMatcher {
 
     /**
      * The constructor for this class
+     * @param charArray the initial array of chars that we want to match to the sub images
+     * @return a new SubImgCharMatcher object
      */
     public SubImgCharMatcher(char[] charArray){
         this.charSet = new HashSet<Character>();
@@ -41,7 +43,7 @@ public class SubImgCharMatcher {
         this.minMaxBrightness = new TreeSet<>();
         this.normalizedBrightness = new TreeMap<>();
         this.typeOfRound = ROUND_ABS;
-        initializeStorageMap();
+        initializeBrightnessMap();
     }
 
     /**
@@ -49,6 +51,8 @@ public class SubImgCharMatcher {
      * return the char from the set of chars, with the closest rounded brightness
      * Given a few chars with the same brightness this method will return the one
      * with the lowest ASCII value.
+     * @param brightness the brightness of the sub image
+     * @return the char that matches the brightness
      */
     public char getCharByImageBrightness(double brightness){
         return normalizedBrightness.get(round(brightness));
@@ -57,6 +61,7 @@ public class SubImgCharMatcher {
 
     /**
      * This method adds a char to our set
+     * @param c the char we want to add
      */
     public void addChar(char c){
         charSet.add(c);
@@ -65,6 +70,7 @@ public class SubImgCharMatcher {
 
     /**
      * This method removes a char to our set
+     * @param c the char we want to remove
      */
     public void removeChar(char c){
         // updateMinMax(c,REMOVED);
@@ -76,6 +82,7 @@ public class SubImgCharMatcher {
     /**
      * Method that builds our char set from the array of chars that we
      * get in the constructor
+     * @param charSet the array of chars
      */
     private void buildSet(char[] charSet) {
         if(charSet!=null){
@@ -87,6 +94,7 @@ public class SubImgCharMatcher {
 
     /**
      * Finds char brightness before linear normalization
+     * @param c the char we want to find the brightness for
      */
     //this does not change no matter what
     private void convertChar(char c) {
@@ -110,6 +118,7 @@ public class SubImgCharMatcher {
 
     /**
      * Allows ASCII_art to define the way of rounding the brightness for each char
+     * @param typeOfRound the type of rounding we want to apply
      */
     public void setTypeOfRound(String typeOfRound){ // default abs
         this.typeOfRound = typeOfRound;
@@ -118,6 +127,7 @@ public class SubImgCharMatcher {
 
     /**
      * Returns reference to our set of chars
+     * @return the set of chars
      */
     public Set<Character> getCharSet() {
         return charSet;
@@ -141,6 +151,9 @@ public class SubImgCharMatcher {
     //     }
     // }
 
+    /**
+     * Updates the min and max brightness values
+     */
     private void updateMinMax(){
         this.minBrightness = 255;
         this.maxBrightness = 0;
@@ -189,7 +202,7 @@ public class SubImgCharMatcher {
     /**
      * Initializes the map with all the possible values of chars from ASCII
      */
-    private void initializeStorageMap() {
+    private void initializeBrightnessMap() {
         for(char i = defaulLowerASCII;i<defaultUpperASCII+1;i++){
             convertChar(i);
         }
