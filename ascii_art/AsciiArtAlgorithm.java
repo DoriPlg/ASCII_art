@@ -1,7 +1,6 @@
 package ascii_art;
 
 import java.io.IOException;
-import java.util.MissingFormatWidthException;
 import java.util.Set;
 
 import ascii_output.AsciiOutput;
@@ -111,13 +110,13 @@ class AsciiArtAlgorithm {
      */
     public void changeRoundingMethod(int bias){
         if (bias >0){
-            this.charMatcher.setTypeOfRound(charMatcher.ROUND_UP);
+            this.charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_UP);
         }
         else if (bias < 0){
-            this.charMatcher.setTypeOfRound(charMatcher.ROUND_DOWN);
+            this.charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_DOWN);
         }
         else{
-            this.charMatcher.setTypeOfRound(charMatcher.ROUND_ABS);
+            this.charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_ABS);
         }
     }
 
