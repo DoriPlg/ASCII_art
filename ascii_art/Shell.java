@@ -120,6 +120,7 @@ public class Shell{
         for (char c : asciiArtAlgorithm.getCharList()) {
             System.out.print(c+" ");
         }
+        System.out.println();
     }
     
     /**
@@ -241,6 +242,13 @@ public class Shell{
             System.out.println("Could not open file.");
             return;
         }
-        shell.run();
+        // shell.run();
+
+        // For debugging purposes
+        shell.parseRemove("all");
+        shell.parseAdd("m");
+        shell.parseAdd("o");
+        shell.printChars();
+        shell.runCommand(new String[]{RUN});
     }
 }

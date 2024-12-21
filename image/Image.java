@@ -151,10 +151,10 @@ public class Image {
                 if (x < sideBuffer || x > sideBuffer + image.getWidth() ||
                         y < topBuffer || y > topBuffer + image.getHeight()) {
                     newPixelArray[y][x]= WHITE;
-            }
-            else {
-                newPixelArray[y][x] = image.getPixel(x + sideBuffer, y + topBuffer);
-            }
+                }
+                else {
+                    newPixelArray[y][x] = image.getPixel(x - sideBuffer, y - topBuffer);
+                }
         }
     }
     return new Image(newPixelArray, buffW, buffH);
@@ -175,7 +175,7 @@ public class Image {
                 Color[][] subImage = new Color[pixelDim][pixelDim];
                 for (int x = 0; x < pixelDim; x++) {
                     for (int y = 0; y < pixelDim; y++) {
-                        subImage[y][x] = getPixel(x + resolution*i, y + resolution*j);
+                        subImage[y][x] = getPixel(x + pixelDim*i, y + pixelDim*j);
                     }
                 }
                 subImages[j][i]  = new Image(subImage,pixelDim,pixelDim);
@@ -209,6 +209,11 @@ public class Image {
         for (int x = 0; x < resolution; x++) {
             for (int y = 0; y < (height * resolution / width); y++) {
                 brightness[y][x] = subImages[y][x].getPixelBrightness();
+
+
+                
+                // For debugging purposes
+                subImages[y][x].saveImage("("+x+"_"+y+").jpeg");
             }
         }
         return brightness;

@@ -32,14 +32,15 @@ public class SubImgCharMatcher {
     /**
      * The constructor for this class
      */
-    public SubImgCharMatcher(char[] charSet){
-        buildSet(charSet);
+    public SubImgCharMatcher(char[] charArray){
+        this.charSet = new HashSet<Character>();
+        buildSet(charArray);
         this.minBrightness = START_MIN;
         this.maxBrightness = START_MAX;
-        this.charSet = new HashSet<Character>();
         this.brightnessMap = new HashMap<>();
         this.minMaxBrightness = new TreeSet<>();
         this.normalizedBrightness = new TreeMap<>();
+        this.typeOfRound = ROUND_ABS;
         initializeStorageMap();
     }
 
@@ -50,14 +51,7 @@ public class SubImgCharMatcher {
      * with the lowest ASCII value.
      */
     public char getCharByImageBrightness(double brightness){
-        char fittedChar = defaultUpperASCII+1 ;
-        double rounded =  round(brightness);
-        for (char c: charSet) {
-            if (normalizedBrightness.get(rounded)<fittedChar) {
-                fittedChar = c;
-            }
-        }
-        return fittedChar;
+        return normalizedBrightness.get(round(brightness));
     }
 
 
@@ -66,15 +60,15 @@ public class SubImgCharMatcher {
      */
     public void addChar(char c){
         charSet.add(c);
-        updateMinMax(c,!REMOVED);
+        // updateMinMax(c,!REMOVED);
     }
 
     /**
      * This method removes a char to our set
      */
     public void removeChar(char c){
-        updateMinMax(c,REMOVED);
-        normalizedBrightness.remove(c);
+        // updateMinMax(c,REMOVED);
+        charSet.remove(c);
         // do not remove from brightnessMap so we have it stored anyway cause it does not change only depends on the number of pixels
 
     }
@@ -130,20 +124,33 @@ public class SubImgCharMatcher {
     }
 
 
-    /**
-     * Min max brightness update
-     */
-    private void updateMinMax(char c,boolean remove){
-        double brightness = brightnessMap.get(c);
-        if(!remove){
-            minMaxBrightness.add(brightnessMap.get(c));
-        }
-        else{
-            minMaxBrightness.remove(brightness);
-        }
-        if(brightness< minBrightness || brightness> maxBrightness){
-            this.minBrightness = minMaxBrightness.first();
-            this.maxBrightness = minMaxBrightness.last();
+    // /**
+    //  * Min max brightness update
+    //  */
+    // private void updateMinMax(char c,boolean remove){
+    //     double brightness = brightnessMap.get(c);
+    //     if(!remove){
+    //         minMaxBrightness.add(brightnessMap.get(c));
+    //     }
+    //     else{
+    //         minMaxBrightness.remove(brightness);
+    //     }
+    //     if(brightness< minBrightness || brightness> maxBrightness){
+    //         this.minBrightness = minMaxBrightness.first();
+    //         this.maxBrightness = minMaxBrightness.last();
+    //     }
+    // }
+
+    private void updateMinMax(){
+        this.minBrightness = 255;
+        this.maxBrightness = 0;
+        for(char c: charSet){
+            if (brightnessMap.get(c)< minBrightness){
+                this.minBrightness = brightnessMap.get(c);
+            }
+            if (brightnessMap.get(c)> maxBrightness){
+                this.maxBrightness = brightnessMap.get(c);
+            }
         }
     }
 
@@ -152,6 +159,7 @@ public class SubImgCharMatcher {
      */
     public void normalizeBrightness(){
         double newBrightness;
+        updateMinMax();
         for(char c : charSet){ // sa nu treci peste new
             newBrightness = calculateLinearNormalization(c);
             if(normalizedBrightness.containsKey(newBrightness)){
@@ -162,6 +170,11 @@ public class SubImgCharMatcher {
             else {
                 normalizedBrightness.put(newBrightness, c);
             }
+        }
+
+        // For debugging purposes
+        for(double d: normalizedBrightness.keySet()){
+            System.out.println(d+" "+normalizedBrightness.get(d));
         }
     }
 
@@ -189,11 +202,12 @@ public class SubImgCharMatcher {
      * Rounds the brightness we look for by the chosen method
      */
     private double round(Double brightness) {
+        if (normalizedBrightness.containsKey(brightness)){
+            return brightness;
+        }
         double roundedBrightness;
         double upperEstimation =  normalizedBrightness.headMap(brightness).firstKey();
         double lowerEstimation = normalizedBrightness.tailMap(brightness).lastKey();
-        double upperDelta = Math.abs(brightness- upperEstimation);
-        double lowerDelta = Math.abs(brightness-lowerEstimation);
         switch(this.typeOfRound){
             case ROUND_UP:
                 roundedBrightness = upperEstimation;
@@ -202,6 +216,8 @@ public class SubImgCharMatcher {
                 roundedBrightness= lowerEstimation;
                 break;
             default:
+                double upperDelta = Math.abs(brightness- upperEstimation);
+                double lowerDelta = Math.abs(brightness-lowerEstimation);
                 roundedBrightness = (upperDelta<lowerDelta)? upperEstimation:lowerEstimation;
                 break;
         }

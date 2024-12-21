@@ -150,6 +150,11 @@ class AsciiArtAlgorithm {
         for (int i = 0; i < brightness.length; i++) {
             for (int j = 0; j < brightness[0].length; j++) {
                 asciiArt[i][j] = charMatcher.getCharByImageBrightness(brightness[i][j]);
+                
+                
+                // For debugging purposes
+                System.out.println("pixel ("+ i+","+ j+") brightness: "+ brightness[i][j]+
+                "   Matched with char: "+asciiArt[i][j]);
             }
         }
         outputMethod.out(asciiArt);
