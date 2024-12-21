@@ -159,6 +159,7 @@ public class SubImgCharMatcher {
      */
     public void normalizeBrightness(){
         double newBrightness;
+        normalizedBrightness.clear();
         updateMinMax();
         for(char c : charSet){ // sa nu treci peste new
             newBrightness = calculateLinearNormalization(c);
