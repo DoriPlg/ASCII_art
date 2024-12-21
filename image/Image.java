@@ -138,22 +138,22 @@ public class Image {
      * Buffers the image to the nearest power of 2.
      * @return The buffered image.
      */
-    public Image getBuffered(){
-        int buffH = bufferedHeight();
-        int buffW = bufferedWidth();
+    public static Image getBuffered(Image image) {
+        int buffH = image.bufferedHeight();
+        int buffW = image.bufferedWidth();
 
-        int topBuffer = (buffH-height)/2;
-        int sideBuffer = (buffW-width)/2;
+        int topBuffer = (buffH-image.getHeight())/2;
+        int sideBuffer = (buffW-image.getWidth())/2;
 
         Color[][] newPixelArray = new Color[buffH][buffW];
-        for (int y = 0; y < bufferedHeight(); y++) {
-            for (int x = 0; x < bufferedWidth(); x++) {
-                if (x < sideBuffer || x > sideBuffer + width ||
-                        y < topBuffer || y > topBuffer + height) {
+        for (int y = 0; y < image.bufferedHeight(); y++) {
+            for (int x = 0; x < image.bufferedWidth(); x++) {
+                if (x < sideBuffer || x > sideBuffer + image.getWidth() ||
+                        y < topBuffer || y > topBuffer + image.getHeight()) {
                     newPixelArray[y][x]= WHITE;
             }
             else {
-                newPixelArray[y][x] = getPixel(x + sideBuffer, y + topBuffer);
+                newPixelArray[y][x] = image.getPixel(x + sideBuffer, y + topBuffer);
             }
         }
     }
