@@ -15,8 +15,7 @@ class AsciiArtAlgorithm {
 
     private Image image;
     private int resolution;
-    private SubImgCharMatcher charMatcher;
-    private AsciiOutput outputMethod;
+    private final SubImgCharMatcher charMatcher;
     private boolean changeImage;
     private boolean changeCharSet;
     private double[][] brightness;
@@ -31,7 +30,6 @@ class AsciiArtAlgorithm {
         loadImage(pathImage);
         this.resolution = 2;
         this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
-        this.outputMethod = new ConsoleAsciiOutput();
         this.changeImage = true;
         this.changeCharSet = true;
     }
@@ -69,7 +67,7 @@ class AsciiArtAlgorithm {
      */
     public void addChars(char[] charList){
         int pre_size = charMatcher.getCharSet().size();
-        for (int i = 0; i < charList.length; i++) charMatcher.addChar(charList[i]);
+        for (char c : charList) charMatcher.addChar(c);
         if (pre_size !=  charMatcher.getCharSet().size()) changeCharSet = true;
     }
 
@@ -80,27 +78,11 @@ class AsciiArtAlgorithm {
      */
     public void removeChars(char[] charList){
         int pre_size = charMatcher.getCharSet().size();
-        for (int i = 0; i < charList.length; i++) charMatcher.removeChar(charList[i]);
+        for (char c : charList) charMatcher.removeChar(c);
         if (pre_size != charMatcher.getCharSet().size()) changeCharSet = true;
     }
 
-    /**
-     * Sets the output method to html output, with the desired filename and font.
-     * @param filename the name of the file to be written.
-     * @param fontName the name of the font to be used.
-     */
-    public void htmlOutput(String filename, String fontName){
-        this.outputMethod = new HtmlAsciiOutput(filename, fontName);
-    }
 
-    /**
-     * Sets the output method to console output.
-     */
-    public void consoleOutput(){
-        if (!(outputMethod instanceof ConsoleAsciiOutput)){
-            this.outputMethod = new ConsoleAsciiOutput();
-        }
-    }
 
     /**
      * Changes the rounding method used to match the brightness of the image to the characters
@@ -130,11 +112,12 @@ class AsciiArtAlgorithm {
     }
 
     /**
-     * The main method of the class, with the current settings, generates the ascii art and outputs it.
+     * The main method of the class, with the current settings, generates the ascii art and returns it.
      * Takes care to only recalculate the brightness if the image has changed, and to only normalize the character set if it has changed.
+     * @return char[][] defining the art.
      * @throws TooSmallSetException if the character set is too small.
      */
-    public void asciiArt() throws TooSmallSetException{
+    public char[][] run() throws TooSmallSetException{
         if (charMatcher.getCharSet().size() < 2){
             throw new TooSmallSetException();
         }
@@ -157,13 +140,13 @@ class AsciiArtAlgorithm {
                 asciiArt[i][j] = charMatcher.getCharByImageBrightness(brightness[i][j]);
             }
         }
-        outputMethod.out(asciiArt);
+        return asciiArt;
     }
 
     /**
      * Exception for when the resolution is out of bounds.
      */
-    class BadResolutionException extends Exception {
+    static class BadResolutionException extends Exception {
         public BadResolutionException() {
             super("exceeding boundaries");
         }
@@ -172,7 +155,7 @@ class AsciiArtAlgorithm {
     /**
      * Exception for when the character set is too small.
      */
-    class TooSmallSetException extends Exception {
+    static class TooSmallSetException extends Exception {
         public TooSmallSetException() {
             super("Charset is too small.");
         }
