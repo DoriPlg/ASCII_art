@@ -65,6 +65,25 @@ public class SubImgCharMatcher {
      */
     public void addChar(char c){
         charSet.add(c);
+        // if (brightnessMap.get(c) > maxBrightness){
+        //     maxBrightness = brightnessMap.get(c);
+        //     changeMinMax = true;
+        // }
+        // else if (brightnessMap.get(c) < minBrightness){
+        //     minBrightness = brightnessMap.get(c);
+        //     changeMinMax = true;
+        // }
+        // else{
+        //     double newBrightness = calculateLinearNormalization(c);
+        //     if(normalizedBrightness.containsKey(newBrightness)){
+        //         if(normalizedBrightness.get(newBrightness)>c){
+        //             normalizedBrightness.put(newBrightness, c);
+        //         }
+        //     }
+        //     else {
+        //         normalizedBrightness.put(newBrightness, c);
+        //     }
+        // }
         // updateMinMax(c,!REMOVED);
     }
 

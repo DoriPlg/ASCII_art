@@ -55,7 +55,7 @@ class AsciiArtAlgorithm {
     public int changeResolution(boolean up) throws BadResolutionException {
         if (up && resolution * 2 > image.getWidth() ||
          !up && resolution / 2 < Math.max(1,image.getWidth()/image.getHeight())){
-            throw new BadResolutionException("exceeding boundaries");
+            throw new BadResolutionException();
         }
         this.resolution = up ? resolution*2 : resolution/2;
         changeImage = true;      
@@ -136,7 +136,7 @@ class AsciiArtAlgorithm {
      */
     public void asciiArt() throws TooSmallSetException{
         if (charMatcher.getCharSet().size() < 2){
-            throw new TooSmallSetException(); // TODO: check if two with same brightness
+            throw new TooSmallSetException();
         }
         if (changeImage){
             System.out.println("Calculating brightness");
@@ -164,8 +164,8 @@ class AsciiArtAlgorithm {
      * Exception for when the resolution is out of bounds.
      */
     class BadResolutionException extends Exception {
-        public BadResolutionException(String message) {
-            super(message);
+        public BadResolutionException() {
+            super("exceeding boundaries");
         }
     }
 
