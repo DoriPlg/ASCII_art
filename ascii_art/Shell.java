@@ -1,12 +1,14 @@
 package ascii_art;
 
 import java.io.IOException;
+import java.util.HashSet;
 
-import ascii_art.AsciiArtAlgorithm.BadResolutionException;
 import ascii_art.AsciiArtAlgorithm.TooSmallSetException;
 import ascii_output.AsciiOutput;
 import ascii_output.ConsoleAsciiOutput;
 import ascii_output.HtmlAsciiOutput;
+import image.Image;
+import image_char_matching.SubImgCharMatcher;
 
 public class Shell{
     private static final String HTML = "html";
@@ -29,10 +31,14 @@ public class Shell{
     private static final String HTML_OUTPUT_FILE = "out.html";
     private static final String HTML_FONT = "Courier New";
     private static final String CHG_RUND_MTD = "change rounding method";
+    private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 
+    private final Image image;
+    private int resolution;
     private AsciiOutput outputMethod;
-    private final AsciiArtAlgorithm asciiArtAlgorithm;
+    private final HashSet<Character> charSet;
+    private String roundingMethod;
 
     /**
      * Constructor for the Shell class.
@@ -40,8 +46,14 @@ public class Shell{
      * @throws IOException if the file cannot be opened.
      */
     public Shell(String imageName) throws IOException {
+        this.charSet = new HashSet<>();
+        for (char c : DEFAULT_CHAR_LIST) {
+            charSet.add(c);
+        }
+        this.roundingMethod = SubImgCharMatcher.ROUND_ABS;
+        this.resolution = 2;
         this.outputMethod = new ConsoleAsciiOutput();
-        this.asciiArtAlgorithm = new AsciiArtAlgorithm(imageName);
+        this.image = new Image(imageName);
     }
 
     /**
@@ -63,15 +75,22 @@ public class Shell{
      */
     private int parseResolution(String commandString) throws
                         IllegalArgumentException, BadResolutionException {
+        boolean up;
         if (commandString.equals(UP)){
-            return asciiArtAlgorithm.changeResolution(true);
+            up = true;
         }
         else if (commandString.equals(DOWN)){
-            return asciiArtAlgorithm.changeResolution(false);
+            up = false;
         }
         else {
             throw new IllegalArgumentException("incorrect direction.");
         }
+        if (up && resolution * 2 > image.getWidth() ||
+                !up && resolution / 2 < Math.max(1,image.getWidth()/image.getHeight())){
+            throw new BadResolutionException();
+        }
+        this.resolution = up ? resolution*2 : resolution/2;
+        return resolution;
     }
 
     /**
@@ -90,14 +109,14 @@ public class Shell{
         }
         else if (charString.equals(SPACE_KEY)){
             return new char[]{' '};}
-        else if (charString.length() == 1){ 
+        else if (charString.length() == 1){
             return new char[]{charString.charAt(0)};}
         else if(charString.length() == 3 && charString.charAt(1) == '-'){
             char start = charString.charAt(0);
             char end = charString.charAt(2);
             char[] charList = new char[Math.abs(start-end)+1];
             for (char i = 0; i < charList.length; i++) {
-                 charList[i] = (char)((start > end ? end: start) + i); 
+                 charList[i] = (char)((start > end ? end: start) + i);
             }
             return charList;
         }
@@ -111,7 +130,10 @@ public class Shell{
      */
     private void parseAdd(String commandString) throws
                                     IllegalArgumentException {
-        asciiArtAlgorithm.addChars(makeCharArray(commandString));
+        for (char c : makeCharArray(commandString))
+        {
+            charSet.add(c);
+        }
     }
 
     /**
@@ -121,19 +143,22 @@ public class Shell{
      */
     private void parseRemove(String commandString) throws
                                     IllegalArgumentException {
-        asciiArtAlgorithm.removeChars(makeCharArray(commandString));
+        for (char c : makeCharArray(commandString))
+        {
+            charSet.remove(c);
+        }
     }
 
     /**
      * Prints the characters in the char list.
      */
     private void printChars(){
-        for (char c : asciiArtAlgorithm.getCharList()) {
+        for (char c : charSet) {
             System.out.print(c+" ");
         }
         System.out.println();
     }
-    
+
     /**
      * Prompts the user for input and reads it.
      * @return the user input split by spaces.
@@ -142,7 +167,7 @@ public class Shell{
         System.out.print(USER_INPUT_PROMPT);
         return KeyboardInput.readLine().split(" ");
     }
-    
+
     /**
      * Parses the rounding method command.
      * @param commandString the command string given by the user.
@@ -151,9 +176,9 @@ public class Shell{
     private void parseRoundingMethod(String commandString) throws
                                         IllegalArgumentException {
         switch (commandString) {
-            case UP -> asciiArtAlgorithm.changeRoundingMethod(1);
-            case DOWN -> asciiArtAlgorithm.changeRoundingMethod(-1);
-            case ABS -> asciiArtAlgorithm.changeRoundingMethod(0);
+            case UP -> roundingMethod = SubImgCharMatcher.ROUND_UP;
+            case DOWN -> roundingMethod = SubImgCharMatcher.ROUND_DOWN;
+            case ABS -> roundingMethod = SubImgCharMatcher.ROUND_ABS;
             default -> throw new IllegalArgumentException(INCORRECT_FORMAT);
         }
     }
@@ -179,7 +204,7 @@ public class Shell{
     /**
      * Runs the shell, prompting the user for input and executing commands.
      * The shell will run until the user types "exit".
-     * The shell will print an error message if the command is not recognized, 
+     * The shell will print an error message if the command is not recognized,
      * or if the command cannot be executed.
      */
     public void run(){
@@ -239,13 +264,18 @@ public class Shell{
             }
             case RUN -> {
                 try {
-                    outputMethod.out(asciiArtAlgorithm.run());
+                    generateArt();
                 } catch (TooSmallSetException e) {
                     System.out.println("Did not execute. " + e.getMessage());
                 }
             }
             default -> System.out.println(errWriter("execute", "incorrect command."));
         }
+    }
+
+    private void generateArt() throws TooSmallSetException {
+        AsciiArtAlgorithm asciiArt = new AsciiArtAlgorithm(image,resolution, charSet, roundingMethod);
+        outputMethod.out(asciiArt.run());
     }
 
     /**
@@ -267,4 +297,14 @@ public class Shell{
         }
         shell.run();
     }
+
+    /**
+     * Exception for when the resolution is out of bounds.
+     */
+    private static class BadResolutionException extends Exception {
+        public BadResolutionException() {
+            super("exceeding boundaries");
+        }
+    }
+
 }

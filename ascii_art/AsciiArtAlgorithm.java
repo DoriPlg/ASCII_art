@@ -1,114 +1,34 @@
 package ascii_art;
 
-import java.io.IOException;
-import java.util.Set;
-
-import ascii_output.AsciiOutput;
-import ascii_output.ConsoleAsciiOutput;
-import ascii_output.HtmlAsciiOutput;
 import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
+import java.util.Set;
+
 class AsciiArtAlgorithm {
-    private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    static ImageSnapshot imgSnap = null;
+    static CharSetSnapshot charSetSnap = null;
 
 
-    private Image image;
-    private int resolution;
-    private final SubImgCharMatcher charMatcher;
-    private boolean changeImage;
-    private boolean changeCharSet;
-    private double[][] brightness;
+    private final Image image;
+    private final int resolution;
+    private final Set<Character> characterSet;
+    private final String rounding;
 
     /**
      * Constructor for the AsciiArtAlgorithm class. Initializes the image, resolution, charMatcher, and outputMethod.
-     * Sets thee change flags to true.
-     * @param pathImage the path to the image file.
-     * @throws IOException on file open error.
+     * Sets the change flags to true.
+     *
+     * @param img            is the image to be split
+     * @param resolution     the resolution to split the image into
+     * @param roundingMethod the desired rounding method by the user
      */
-    public AsciiArtAlgorithm(String pathImage) throws IOException {
-        loadImage(pathImage);
-        this.resolution = 2;
-        this.charMatcher= new SubImgCharMatcher(DEFAULT_CHAR_LIST);
-        this.changeImage = true;
-        this.changeCharSet = true;
-    }
-
-    /**
-     * Changes the image to a new image.
-     * @param pathImage the path to the new image file.
-     * @throws IOException on file open error.
-     */
-    private void loadImage(String pathImage) throws IOException {
-        this.image =Image.getBuffered( new Image(pathImage));
-        this.changeImage = true;
-    }
-
-    /**
-     * Changes the resolution of the image.
-     * @param up true if the resolution should be increased, false if it should be decreased.
-     * @return the new resolution.
-     * @throws BadResolutionException if the resolution is out of bounds.
-     */
-    public int changeResolution(boolean up) throws BadResolutionException {
-        if (up && resolution * 2 > image.getWidth() ||
-         !up && resolution / 2 < Math.max(1,image.getWidth()/image.getHeight())){
-            throw new BadResolutionException();
-        }
-        this.resolution = up ? resolution*2 : resolution/2;
-        changeImage = true;      
-        return resolution;
-    }
-
-    /**
-     * Adds a character to the character set, if it is not already in the set.
-     * Sets the changeCharSet flag to true.
-     * @param charList the characters to be added.
-     */
-    public void addChars(char[] charList){
-        int pre_size = charMatcher.getCharSet().size();
-        for (char c : charList) charMatcher.addChar(c);
-        if (pre_size !=  charMatcher.getCharSet().size()) changeCharSet = true;
-    }
-
-    /**
-     * Removes a character from the character set, if it is in the set.
-     * Sets the changeCharSet flag to true.
-     * @param charList the characters to be removed.
-     */
-    public void removeChars(char[] charList){
-        int pre_size = charMatcher.getCharSet().size();
-        for (char c : charList) charMatcher.removeChar(c);
-        if (pre_size != charMatcher.getCharSet().size()) changeCharSet = true;
-    }
-
-
-
-    /**
-     * Changes the rounding method used to match the brightness of the image to the characters
-     * @param bias an integer that represents the rounding method
-     * 1: round up
-     * -1: round down
-     * 0: round to the closest
-     */
-    public void changeRoundingMethod(int bias){
-        if (bias >0){
-            this.charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_UP);
-        }
-        else if (bias < 0){
-            this.charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_DOWN);
-        }
-        else{
-            this.charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_ABS);
-        }
-    }
-
-    /**
-     * Gets the character list currently in use.
-     * @return the character list.
-     */
-    public Set<Character> getCharList() {
-        return charMatcher.getCharSet();
+    public AsciiArtAlgorithm(Image img, int resolution, Set<Character> characterSet, String roundingMethod){
+        this.image = img;
+        this.resolution = resolution;
+        this.characterSet = characterSet;
+        this.rounding = roundingMethod;
     }
 
     /**
@@ -118,20 +38,12 @@ class AsciiArtAlgorithm {
      * @throws TooSmallSetException if the character set is too small.
      */
     public char[][] run() throws TooSmallSetException{
-        if (charMatcher.getCharSet().size() < 2){
+        if (characterSet.size() < 2){
             throw new TooSmallSetException();
         }
-        if (changeImage){
-            System.out.println("Calculating brightness");
-            brightness = image.getImageBrightness(resolution);
-            changeImage = false;
-        }
-        if (changeCharSet){
-            System.out.println("Normalizing chars");
-            charMatcher.normalizeBrightness();
-            changeCharSet = false;
-        }
-
+        SubImgCharMatcher charMatcher = getCharMatcher(characterSet);
+        double[][] brightness = getBrightnessMatrix();
+        charMatcher.setTypeOfRound(rounding);
 
         
         char[][] asciiArt = new char[brightness.length][brightness[0].length];
@@ -143,13 +55,27 @@ class AsciiArtAlgorithm {
         return asciiArt;
     }
 
-    /**
-     * Exception for when the resolution is out of bounds.
-     */
-    static class BadResolutionException extends Exception {
-        public BadResolutionException() {
-            super("exceeding boundaries");
+    private double[][] getBrightnessMatrix(){
+        if (imgSnap == null || !(image == imgSnap.image() && resolution == imgSnap.resolution())){
+            System.out.println("Calculating brightness");
+            imgSnap = new ImageSnapshot(image,resolution,image.getImageBrightness(resolution));
         }
+        return imgSnap.brightness();
+    }
+
+    private SubImgCharMatcher getCharMatcher(Set<Character> characterSet){
+
+        if (charSetSnap == null || !charSetSnap.sameSet(characterSet)){
+            System.out.println("Normalizing chars");
+            char[] chars = new char[characterSet.size()];
+            char i =0;
+            for ( char c : characterSet){
+                chars[i++] = c;
+            }
+            charSetSnap = new CharSetSnapshot(new SubImgCharMatcher(chars));
+        }
+        return charSetSnap.charMatcher();
+
     }
 
     /**
@@ -158,6 +84,17 @@ class AsciiArtAlgorithm {
     static class TooSmallSetException extends Exception {
         public TooSmallSetException() {
             super("Charset is too small.");
+        }
+    }
+
+    private record ImageSnapshot(Image image, int resolution, double[][] brightness) {}
+
+    private record CharSetSnapshot(SubImgCharMatcher charMatcher) {
+        boolean sameSet(Set<Character> chars){
+            for(char c: chars){
+                if (!this.charMatcher().getCharSet().contains(c)) return false;
+            }
+            return chars.size() == this.charMatcher.getCharSet().size();
         }
     }
 }
