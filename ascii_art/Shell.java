@@ -6,6 +6,8 @@ import ascii_art.AsciiArtAlgorithm.BadResolutionException;
 import ascii_art.AsciiArtAlgorithm.TooSmallSetException;
 
 public class Shell{
+    private static final String HTML = "html";
+    private static final String CONSOLE = "console";
     private static final String RUN = "asciiArt";
     private static final String UP = "up";
     private static final String DOWN = "down";
@@ -54,7 +56,8 @@ public class Shell{
      * @throws IllegalArgumentException if the command is not formatted correctly.
      * @throws BadResolutionException if the resolution is out of bounds.
      */
-    private int parseResolution(String commandString) throws IllegalArgumentException, BadResolutionException {
+    private int parseResolution(String commandString) throws
+                        IllegalArgumentException, BadResolutionException {
         if (commandString.equals(UP)){
             return asciiArtAlgorithm.changeResolution(true);
         }
@@ -72,14 +75,18 @@ public class Shell{
      * @return the char array.
      * @throws IllegalArgumentException if the string is not formatted correctly.
      */
-    private char[] makeCharArray(String charString) throws IllegalArgumentException {
+    private char[] makeCharArray(String charString) throws
+                                    IllegalArgumentException {
         if (charString.equals(ALL_CHARS)){
             char[] charList = new char[126-32+1];
-            for (char i = 0; i < charList.length; i++) { charList[i] = (char)(32+i);}
+            for (char i = 0; i < charList.length; i++) {
+                charList[i] = (char)(32+i);}
             return charList;
         }
-        else if (charString.equals(SPACE_KEY)){ return new char[]{' '};}
-        else if (charString.length() == 1){ return new char[]{charString.charAt(0)};}
+        else if (charString.equals(SPACE_KEY)){
+            return new char[]{' '};}
+        else if (charString.length() == 1){ 
+            return new char[]{charString.charAt(0)};}
         else if(charString.length() == 3 && charString.charAt(1) == '-'){
             char start = charString.charAt(0);
             char end = charString.charAt(2);
@@ -97,7 +104,8 @@ public class Shell{
      * @param commandString the command string given by the user.
      * @throws IllegalArgumentException if the command is not formatted correctly.
      */
-    private void parseAdd(String commandString) throws IllegalArgumentException {
+    private void parseAdd(String commandString) throws
+                                    IllegalArgumentException {
         asciiArtAlgorithm.addChars(makeCharArray(commandString));
     }
 
@@ -106,7 +114,8 @@ public class Shell{
      * @param commandString the command string given by the user.
      * @throws IllegalArgumentException if the command is not formatted correctly.
      */
-    private void parseRemove(String commandString) throws IllegalArgumentException {
+    private void parseRemove(String commandString) throws
+                                    IllegalArgumentException {
         asciiArtAlgorithm.removeChars(makeCharArray(commandString));
     }
 
@@ -134,7 +143,8 @@ public class Shell{
      * @param commandString the command string given by the user.
      * @throws IllegalArgumentException if the command is not formatted correctly.
      */
-    private void parseRoundingMethod(String commandString) throws IllegalArgumentException {
+    private void parseRoundingMethod(String commandString) throws
+                                        IllegalArgumentException {
         if (commandString.equals(UP)){
             asciiArtAlgorithm.changeRoundingMethod(1);
         }
@@ -154,11 +164,12 @@ public class Shell{
      * @param commandString the command string given by the user.
      * @throws IllegalArgumentException if the command is not formatted correctly.
      */
-    private void parseOutputMethod(String commandString) throws IllegalArgumentException {
-        if (commandString.equals("console")){
+    private void parseOutputMethod(String commandString) throws
+                                        IllegalArgumentException {
+        if (commandString.equals(CONSOLE)){
             asciiArtAlgorithm.consoleOutput();
         }
-        else if (commandString.equals("html")){
+        else if (commandString.equals(HTML)){
             asciiArtAlgorithm.htmlOutput(HTML_OUTPUT_FILE,HTML_FONT);
         }
         else{
@@ -219,7 +230,7 @@ public class Shell{
             catch (TooSmallSetException e){ 
                 System.out.println("Did not execute. "+e.getMessage());}
         }
-        else { System.out.println(errWriter("execute","incorrect command."));}  
+        else { System.out.println(errWriter("execute","incorrect command."));} 
     }
 
     /**
