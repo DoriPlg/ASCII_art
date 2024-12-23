@@ -15,6 +15,7 @@ public class Image {
     private static final double GREEN_FACTOR = 0.7152;
     private static final double BLUE_FACTOR = 0.0722;
     private static final Color WHITE = new Color(255, 255, 255);
+    private static final double GRAY_WHITE = 255;
 
     private final Color[][] pixelArray;
     private final int width;
@@ -131,7 +132,7 @@ public class Image {
     private static double grayCode(Color color) {
         if (color.equals(WHITE)) {
             // To pre-handle the case of white pixels, avoid incorrect rounding.
-            return 255;
+            return GRAY_WHITE;
         }
         return color.getRed() * RED_FACTOR +
                 color.getGreen() * GREEN_FACTOR +
