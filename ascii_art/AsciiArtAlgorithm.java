@@ -58,7 +58,6 @@ class AsciiArtAlgorithm {
      */
     private double[][] getBrightnessMatrix(){
         if (imgSnap == null || resolution != imgSnap.resolution()){
-            System.out.println("Calculating brightness");
             imgSnap = new ImageSnapshot(image,resolution,image.getImageBrightness(resolution));
         }
         return imgSnap.brightness();

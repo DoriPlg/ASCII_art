@@ -35,6 +35,7 @@ public class Shell{
     private static final String HTML_OUTPUT_FILE = "out.html";
     private static final String HTML_FONT = "Courier New";
     private static final String CHG_RUND_MTD = "change rounding method";
+    private static final String CHG_OPUT_MTD = "change output method";
     private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 
@@ -251,7 +252,7 @@ public class Shell{
             case RESOLUTION -> {
                 try {
                     int resolution = parseResolution(commands[1]);
-                    System.out.println("Resolution set to " + resolution);
+                    System.out.println("Resolution set to " + resolution + ".");
                 } 
                 catch (IllegalArgumentException | BadResolutionException e) {
                     System.out.println(errWriter("change resolution", e.getMessage()));
@@ -273,7 +274,7 @@ public class Shell{
                     parseOutputMethod(commands[1]);
                 } 
                 catch (IllegalArgumentException e) {
-                    System.out.println(errWriter("change output", e.getMessage()));
+                    System.out.println(errWriter(CHG_OPUT_MTD, e.getMessage()));
                 }
             }
             case RUN -> {
@@ -312,7 +313,7 @@ public class Shell{
      */
     private static class BadResolutionException extends Exception {
         public BadResolutionException() {
-            super("exceeding boundaries");
+            super("exceeding boundaries.");
         }
     }
 
