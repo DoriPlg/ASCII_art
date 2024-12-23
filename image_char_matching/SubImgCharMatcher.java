@@ -48,7 +48,7 @@ public class SubImgCharMatcher {
         this.normalizedBrightness = new TreeMap<>();
         this.typeOfRound = ROUND_ABS;
         buildSet(charArray);
-        initializeStorageMap();
+        initializeBrightnessMap();
         normalizeBrightness();
     }
 
@@ -204,7 +204,7 @@ public class SubImgCharMatcher {
     /**
      * Initializes the map with all the possible values of chars from ASCII
      */
-    private void initializeStorageMap() {
+    private void initializeBrightnessMap() {
         for(char i = LOWER_ASCII;i<UPPER_ASCII+1;i++){
             convertChar(i);
         }
