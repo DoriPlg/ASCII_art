@@ -125,6 +125,7 @@ public class SubImgCharMatcher {
     /**
      * Method that builds our char set from the array of chars that we get in the constructor
      * @param charArray the array of chars that we want to use
+     * @throws IllegalArgumentException if the char is not in the ASCII range [32,126]
      */
     private void buildSet(char[] charArray) throws IllegalArgumentException{
         if(charArray!=null){
@@ -136,8 +137,8 @@ public class SubImgCharMatcher {
 
     /**
      * Finds char brightness before linear normalization
+     * @param c the char that we want to convert
      */
-    //this does not change no matter what
     private void convertChar(char c) {
         double brightnessCounter = 0;
         double brightnessValue ;
@@ -156,9 +157,8 @@ public class SubImgCharMatcher {
 
 
     /**
-     * Min max brightness update
+     * Min max brightness update, called before linear normalization
      */
-    //minmaxchanged
     private void updateMinMax(){
         this.minBrightness = MAX_BRIGHTNESS;
         this.maxBrightness = MIN_BRIGHTNESS;
@@ -197,6 +197,8 @@ public class SubImgCharMatcher {
     /**
      * Returns the result of applying the newCharBrightness formula on our
      * initial values
+     * @param c the char that we want to convert
+     * @return the brightness of the char
      */
     private double calculateLinearNormalization(char c){
         double numerator = brightnessMap.get(c) - this.minBrightness;
@@ -217,6 +219,8 @@ public class SubImgCharMatcher {
 
     /**
      * Rounds the brightness we look for by the chosen method
+     * @param brightness the brightness that we want to round
+     * @return the rounded brightness
      */
     private double round(Double brightness) {
         double roundedBrightness;
