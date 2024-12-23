@@ -9,35 +9,68 @@ import java.util.*;
 public class SubImgCharMatcher {
 
     /**
-     * The maximum and minimum brightness that we can have
+     * The maximum brightness value
      */
     private static final double MAX_BRIGHTNESS = 255;
+    /**
+     * The minimum brightness value
+     */
     private static final double MIN_BRIGHTNESS = 0;
     /**
-     * The error message for the case when the char is not in the ASCII range
+     * The error message for the ASCII out of bounds exception
      */
     private static final String ASCII_OUT_OF_BOUNDS = "the char is not in the ASCII range";
     /**
-     * The ASCII range is [32,126]
+     * The lower bound of the ASCII table
      */
     public static final int LOWER_ASCII = 32;
+    /**
+     * The upper bound of the ASCII table
+     */
     public static final int UPPER_ASCII = 126;
     /**
-     * The types of rounding that we can use
+     * Round up for the brightness
      */
     public static final String ROUND_UP = "up";
+    /**
+     * Round down for the brightness
+     */
     public static final String ROUND_DOWN = "down";
+    /**
+     * Round absolute for the brightness
+     */
     public static final String ROUND_ABS = "abs";
     /**
-     * The instance attributes
+     * the set holding all the chars in use
      */
     private final Set<Character> charSet ;
+    /**
+     * the map holding the brightness of each char
+     */
     private final HashMap<Character,Double> brightnessMap ;
+    /**
+     * the set holding the chars that were added
+     */
     private final Set<Character> addedChars;
+    /**
+     * the set holding the chars that were removed
+     */
     private final Set<Character> removedChars;
+    /**
+     * the map holding the normalized brightness of the chars
+     */
     private final SortedMap<Double,Character> normalizedBrightness;
+    /**
+     * The greatest brightness value
+     */
     private double minBrightness ;
+    /**
+     * The smallest brightness value
+     */
     private double maxBrightness ;
+    /**
+     * The type of rounding that we want to use
+     */
     private String typeOfRound;
 
 

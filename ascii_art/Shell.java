@@ -52,7 +52,7 @@ public class Shell{
 
     /**
      * Constructor for the Shell class.
-     * @throws IOException if the file cannot be opened.
+     * @throws IllegalArgumentException if the default character list is invalid.
      */
     public Shell() throws IllegalArgumentException {
         this.charMatcher = new SubImgCharMatcher(DEFAULT_CHAR_LIST);
@@ -226,7 +226,7 @@ public class Shell{
     public void run(String imageName){
         try { this.image = new Image(imageName); }
         catch (IOException e) {
-            System.out.println("Could not open file.");
+            System.out.println(e.getMessage()+ " " + imageName);
             return;
         }
         
@@ -315,9 +315,7 @@ public class Shell{
             System.out.println("Could not start Shell. "+e.getMessage());
             return;
         }
-        // shell.run(args[0]);
-        shell.run("images/cat.jpeg");
-        shell.run("images/board.jpeg");
+        shell.run(args[0]);
     }
 
     /**
