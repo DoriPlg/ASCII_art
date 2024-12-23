@@ -15,6 +15,9 @@ import image_char_matching.SubImgCharMatcher;
  * It takes user input and executes commands to generate ascii art.
  */
 public class Shell{
+    /**
+     * Constants for the shell.
+     */
     private static final String HTML = "html";
     private static final String CONSOLE = "console";
     private static final String RUN = "asciiArt";
@@ -39,6 +42,9 @@ public class Shell{
     private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 
+    /**
+     * Instance variables for the shell.
+     */
     private Image image;
     private int resolution;
     private AsciiOutput outputMethod;

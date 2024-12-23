@@ -11,15 +11,22 @@ import image_char_matching.SubImgCharMatcher;
  */
 class AsciiArtAlgorithm {
 
+    /**
+     * The image snapshot and last image are used to avoid recalculating the brightness matrix
+     */
     private static ImageSnapshot imgSnap = null;
     private static PrepareImage lastImage = null;
 
+    /**
+     * The image, resolution, charMatcher, and outputMethod are the settings of the algorithm.
+     */
     private final PrepareImage image;
     private final int resolution;
     private final SubImgCharMatcher characterMatcher;
 
     /**
-     * Constructor for the AsciiArtAlgorithm class. Initializes the image, resolution, charMatcher, and outputMethod.
+     * Constructor for the AsciiArtAlgorithm class. Initializes the image, resolution,
+     * charMatcher, and outputMethod.
      * Sets the change flags to true.
      * @param img the image to be converted to ascii art.
      * @param resolution the resolution of the ascii art.
@@ -39,7 +46,6 @@ class AsciiArtAlgorithm {
 
     /**
      * The main method of the class, with the current settings, generates the ascii art and returns it.
-     * Takes care to only recalculate the brightness if the image has changed, and to only normalize the character set if it has changed.
      * @return char[][] defining the art.
      * @throws TooSmallSetException if the character set is too small.
      */

@@ -7,12 +7,20 @@ import java.awt.Color;
  */
 public class PrepareImage {
     
+    /**
+     * The factors used to calculate the gray code of a color.
+     */
     private static final double RED_FACTOR = 0.2126;
     private static final double GREEN_FACTOR = 0.7152;
     private static final double BLUE_FACTOR = 0.0722;
     private static final Color WHITE = new Color(255, 255, 255);
     private static final double GRAY_WHITE = 255;
 
+    /**
+     * Instance variables for the PrepareImage class.
+     * The buffered image is the image that has been buffered to the nearest power of 2.
+     * The original image is the image that was passed to the constructor.
+     */
     private Image bufferedImage;
     private Image originalImage;
 

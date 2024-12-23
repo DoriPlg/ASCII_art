@@ -8,25 +8,34 @@ import java.util.*;
  */
 public class SubImgCharMatcher {
 
-
-    private static final int START_MIN = 1;
-    private static final int START_MAX = 0;
+    /**
+     * The maximum and minimum brightness that we can have
+     */
     private static final double MAX_BRIGHTNESS = 255;
     private static final double MIN_BRIGHTNESS = 0;
+    /**
+     * The error message for the case when the char is not in the ASCII range
+     */
     private static final String ASCII_OUT_OF_BOUNDS = "the char is not in the ASCII range";
-    
+    /**
+     * The ASCII range is [32,126]
+     */
     public static final int LOWER_ASCII = 32;
     public static final int UPPER_ASCII = 126;
+    /**
+     * The types of rounding that we can use
+     */
     public static final String ROUND_UP = "up";
     public static final String ROUND_DOWN = "down";
     public static final String ROUND_ABS = "abs";
-    
+    /**
+     * The instance attributes
+     */
     private final Set<Character> charSet ;
     private final HashMap<Character,Double> brightnessMap ;
     private final Set<Character> addedChars;
     private final Set<Character> removedChars;
     private final SortedMap<Double,Character> normalizedBrightness;
-
     private double minBrightness ;
     private double maxBrightness ;
     private String typeOfRound;
@@ -39,8 +48,6 @@ public class SubImgCharMatcher {
      * @param charArray the array of chars that we want to use
      */
     public SubImgCharMatcher(char[] charArray) throws IllegalArgumentException{
-        this.minBrightness = START_MIN;
-        this.maxBrightness = START_MAX;
         this.charSet = new HashSet<>();
         this.addedChars = new HashSet<>();
         this.removedChars = new HashSet<>();
