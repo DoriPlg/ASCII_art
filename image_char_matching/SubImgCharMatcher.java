@@ -17,8 +17,11 @@ public class SubImgCharMatcher {
     
     public static final int LOWER_ASCII = 32;
     public static final int UPPER_ASCII = 126;
-    private final Set<Character> charSet ;
+    public static final String ROUND_UP = "up";
+    public static final String ROUND_DOWN = "down";
+    public static final String ROUND_ABS = "abs";
     
+    private final Set<Character> charSet ;
     private final HashMap<Character,Double> brightnessMap ;
     private final Set<Character> addedChars;
     private final Set<Character> removedChars;
@@ -28,9 +31,6 @@ public class SubImgCharMatcher {
     private double maxBrightness ;
     private String typeOfRound;
 
-    public static final String ROUND_UP = "up";
-    public static final String ROUND_DOWN = "down";
-    public static final String ROUND_ABS = "abs";
 
 
     /**
