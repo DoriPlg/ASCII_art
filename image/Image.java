@@ -129,6 +129,9 @@ public class Image {
      * @return The gray code of the given color.
      */
     private static double grayCode(Color color) {
+        if (color.equals(WHITE)) {
+            return 255;
+        }
         return color.getRed() * RED_FACTOR +
                 color.getGreen() * GREEN_FACTOR +
                 color.getBlue() * BLUE_FACTOR;
