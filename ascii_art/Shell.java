@@ -107,7 +107,8 @@ public class Shell{
             return charList;
         }
         else if (charString.equals(SPACE_KEY)){
-            return new char[]{' '};}
+            return new char[]{' '};
+        }
         else if (charString.length() == 1){
             return new char[]{charString.charAt(0)};}
         else if(charString.length() == 3 && charString.charAt(1) == '-'){
@@ -129,7 +130,8 @@ public class Shell{
      */
     private void parseAdd(String commandString) throws
                                     IllegalArgumentException {
-        for (char c : makeCharArray(commandString))
+        char[] charList = makeCharArray(commandString);
+        for (char c : charList)
         {
             charMatcher.addChar(c);
         }
@@ -142,7 +144,8 @@ public class Shell{
      */
     private void parseRemove(String commandString) throws
                                     IllegalArgumentException {
-        for (char c : makeCharArray(commandString))
+        char[] charList = makeCharArray(commandString);
+        for (char c : charList)
         {
             charMatcher.removeChar(c);
         }

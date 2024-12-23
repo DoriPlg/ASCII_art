@@ -10,7 +10,7 @@ import image_char_matching.SubImgCharMatcher;
  */
 class AsciiArtAlgorithm {
 
-    static ImageSnapshot imgSnap = null;
+    private static ImageSnapshot imgSnap = null;
 
     private final Image image;
     private final int resolution;
@@ -24,7 +24,7 @@ class AsciiArtAlgorithm {
      * @param characterMatcher the character matcher to be used.
      */
     public AsciiArtAlgorithm(Image img, int resolution, SubImgCharMatcher characterMatcher){
-        this.image = img;
+        this.image = Image.getBuffered(img);
         this.resolution = resolution;
         this.characterMatcher = characterMatcher;
     }
@@ -57,7 +57,7 @@ class AsciiArtAlgorithm {
      * @return the brightness matrix of the image.
      */
     private double[][] getBrightnessMatrix(){
-        if (imgSnap == null || !(image == imgSnap.image() && resolution == imgSnap.resolution())){
+        if (imgSnap == null || resolution != imgSnap.resolution()){
             System.out.println("Calculating brightness");
             imgSnap = new ImageSnapshot(image,resolution,image.getImageBrightness(resolution));
         }

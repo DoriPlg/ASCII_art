@@ -34,8 +34,7 @@ public class SubImgCharMatcher {
     /**
      * The constructor for this class
      */
-    public SubImgCharMatcher(char[] charSet){
-        buildSet(charSet);
+    public SubImgCharMatcher(char[] charArray){
         this.minBrightness = START_MIN;
         this.maxBrightness = START_MAX;
         this.charSet = new HashSet<>();
@@ -44,6 +43,7 @@ public class SubImgCharMatcher {
         this.brightnessMap = new HashMap<>();
         this.normalizedBrightness = new TreeMap<>();
         this.typeOfRound = ROUND_ABS;
+        buildSet(charArray);
         initializeStorageMap();
         normalizeBrightness();
     }
@@ -69,8 +69,8 @@ public class SubImgCharMatcher {
      * This method adds a char to our set
      */
     public void addChar(char c){
-        if(!removedChars.remove(c)){
-            if(charSet.add(c)){
+        if(charSet.add(c)){
+            if(!removedChars.remove(c)){
                 addedChars.add(c);
             }
         }
@@ -81,8 +81,8 @@ public class SubImgCharMatcher {
      * This method removes a char to our set
      */
     public void removeChar(char c){
-        if(!addedChars.remove(c)){
-            if(charSet.remove(c)){
+        if(charSet.remove(c)){
+            if(!addedChars.remove(c)){
                 removedChars.add(c);
             }
         }
@@ -108,9 +108,9 @@ public class SubImgCharMatcher {
      * Method that builds our char set from the array of chars that we
      * get in the constructor
      */
-    private void buildSet(char[] charSet) {
-        if(charSet!=null){
-            for (char c : charSet) {
+    private void buildSet(char[] charArray) {
+        if(charArray!=null){
+            for (char c : charArray) {
                 this.charSet.add(c);
             }
         }
