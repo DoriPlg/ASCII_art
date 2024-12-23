@@ -26,7 +26,6 @@ public class PrepareImage {
         this.originalImage = image;
     }
 
-
     /**
      * Returns the buffered image.
      * @return The buffered image.
@@ -34,8 +33,7 @@ public class PrepareImage {
     public Image getOriginalImage() {
         return originalImage;
     }
-
-    
+  
     /**
      * Calculates the width the image should be buffered to.
      * @return The width the image should be buffered to.
@@ -74,7 +72,6 @@ public class PrepareImage {
                 color.getGreen() * GREEN_FACTOR +
                 color.getBlue() * BLUE_FACTOR;
     }
-
     
     /**
      * Calculates the brightness of the image.
@@ -89,7 +86,6 @@ public class PrepareImage {
         }
         return brightness/(255*image.getWidth()*image.getHeight());
     }
-
 
     /**
      * Buffers the image to the nearest power of 2.
@@ -141,8 +137,6 @@ public class PrepareImage {
         }
         return subImages;
     }
-
-
     
     /**
      * Calculates the brightnessof each sub-image (pixel) of the image.
@@ -162,8 +156,4 @@ public class PrepareImage {
         }
         return brightness;
     }
-
-
-
-    
 }

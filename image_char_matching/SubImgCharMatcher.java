@@ -69,7 +69,6 @@ public class SubImgCharMatcher {
         return normalizedBrightness.get(rounded);
     }
 
-
     /**
      * This method adds a char to our set
      * @param c the char that we want to add
@@ -85,7 +84,6 @@ public class SubImgCharMatcher {
             }
         }
     }
-
 
     /**
      * This method removes a char to our set
@@ -103,7 +101,6 @@ public class SubImgCharMatcher {
         }
     }
 
-
     /**
      * Returns reference to the set of chars
      * @return the set of chars
@@ -119,7 +116,6 @@ public class SubImgCharMatcher {
     public void setTypeOfRound(String typeOfRound){ // default abs
         this.typeOfRound = typeOfRound;
     }
-
 
     /**
      * Method that builds our char set from the array of chars that we get in the constructor
@@ -153,7 +149,6 @@ public class SubImgCharMatcher {
         brightnessValue = brightnessCounter/(double)defaultPixelNumber;
         brightnessMap.put(c,brightnessValue); // brightness storage
     }
-
 
     /**
      * Min max brightness update, called before linear normalization
@@ -205,7 +200,6 @@ public class SubImgCharMatcher {
         return numerator/ denominator;
     }
 
-
     /**
      * Initializes the map with all the possible values of chars from ASCII
      */
@@ -214,7 +208,6 @@ public class SubImgCharMatcher {
             convertChar(i);
         }
     }
-
 
     /**
      * Rounds the brightness we look for by the chosen method

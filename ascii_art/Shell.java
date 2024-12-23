@@ -210,7 +210,6 @@ public class Shell{
         outputMethod.out(asciiArt.run());
     }
 
-
     /**
      * Runs the shell, prompting the user for input and executing commands.
      * The shell will run until the user types "exit".
@@ -292,7 +291,6 @@ public class Shell{
             default -> System.out.println(errWriter("execute", "incorrect command."));
         }
     }
-
 
     /**
      * Main method for the shell.
