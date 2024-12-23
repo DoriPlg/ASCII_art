@@ -3,6 +3,11 @@ package ascii_art;
 import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
+
+/**
+ * The AsciiArtAlgorithm class is responsible for converting an image to ascii art.
+ * It uses the brightness of the image to determine the character to be used.
+ */
 class AsciiArtAlgorithm {
 
     static ImageSnapshot imgSnap = null;
@@ -46,6 +51,11 @@ class AsciiArtAlgorithm {
         return asciiArt;
     }
 
+    /**
+     * Returns the brightness matrix of the image.
+     * Avoids recalculating the brightness matrix if the image has not changed.
+     * @return the brightness matrix of the image.
+     */
     private double[][] getBrightnessMatrix(){
         if (imgSnap == null || !(image == imgSnap.image() && resolution == imgSnap.resolution())){
             System.out.println("Calculating brightness");
@@ -63,5 +73,9 @@ class AsciiArtAlgorithm {
         }
     }
 
+    /**
+     * Private record to store the image, resolution, and brightness matrix.
+     * Used to avoid recalculating the brightness matrix if the image and resolution have not changed.
+     */
     private record ImageSnapshot(Image image, int resolution, double[][] brightness) {}
 }

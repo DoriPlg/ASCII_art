@@ -83,8 +83,8 @@ public class Image {
      */
     public void saveImage(String fileName){
         // Initialize BufferedImage, assuming Color[][] is already properly populated.
-        BufferedImage bufferedImage = new BufferedImage(pixelArray[0].length, pixelArray.length,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(pixelArray[0].length,
+                pixelArray.length, BufferedImage.TYPE_INT_RGB);
         // Set each pixel of the BufferedImage to the color from the Color[][].
         for (int x = 0; x < pixelArray.length; x++) {
             for (int y = 0; y < pixelArray[x].length; y++) {
@@ -136,6 +136,7 @@ public class Image {
 
     /**
      * Buffers the image to the nearest power of 2.
+     * @param image The image to be buffered.
      * @return The buffered image.
      */
     public static Image getBuffered(Image image) {

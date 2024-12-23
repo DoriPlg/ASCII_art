@@ -9,6 +9,11 @@ import ascii_output.HtmlAsciiOutput;
 import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
+
+/**
+ * The Shell class is responsible for running the ascii art program.
+ * It takes user input and executes commands to generate ascii art.
+ */
 public class Shell{
     private static final String HTML = "html";
     private static final String CONSOLE = "console";
@@ -194,6 +199,16 @@ public class Shell{
     }
 
     /**
+     * Generates the ascii art.
+     * @throws TooSmallSetException if the character set is too small.
+     */
+    private void generateArt() throws TooSmallSetException {
+        AsciiArtAlgorithm asciiArt = new AsciiArtAlgorithm(image,resolution, charMatcher);
+        outputMethod.out(asciiArt.run());
+    }
+
+
+    /**
      * Runs the shell, prompting the user for input and executing commands.
      * The shell will run until the user types "exit".
      * The shell will print an error message if the command is not recognized,
@@ -217,14 +232,16 @@ public class Shell{
             case ADD -> {
                 try {
                     parseAdd(commands[1]);
-                } catch (IllegalArgumentException e) {
+                } 
+                catch (IllegalArgumentException e) {
                     System.out.println(errWriter(commands[0], e.getMessage()));
                 }
             }
             case REMOVE -> {
                 try {
                     parseRemove(commands[1]);
-                } catch (IllegalArgumentException e) {
+                } 
+                catch (IllegalArgumentException e) {
                     System.out.println(errWriter(commands[0], e.getMessage()));
                 }
             }
@@ -232,15 +249,16 @@ public class Shell{
                 try {
                     int resolution = parseResolution(commands[1]);
                     System.out.println("Resolution set to " + resolution);
-                } catch (IllegalArgumentException | BadResolutionException e) {
-                    System.out.println(
-                            errWriter("change resolution", e.getMessage()));
+                } 
+                catch (IllegalArgumentException | BadResolutionException e) {
+                    System.out.println(errWriter("change resolution", e.getMessage()));
                 }
             }
             case ROUND -> {
                 try {
                     parseRoundingMethod(commands[1]);
-                } catch (IllegalArgumentException e) {
+                } 
+                catch (IllegalArgumentException e) {
                     System.out.println(errWriter(CHG_RUND_MTD, e.getMessage()));
                 }
             }
@@ -250,7 +268,8 @@ public class Shell{
                         throw new IllegalArgumentException(INCORRECT_FORMAT);
                     }
                     parseOutputMethod(commands[1]);
-                } catch (IllegalArgumentException e) {
+                } 
+                catch (IllegalArgumentException e) {
                     System.out.println(errWriter("change output", e.getMessage()));
                 }
             }
@@ -264,10 +283,6 @@ public class Shell{
         }
     }
 
-    private void generateArt() throws TooSmallSetException {
-        AsciiArtAlgorithm asciiArt = new AsciiArtAlgorithm(image,resolution, charMatcher);
-        outputMethod.out(asciiArt.run());
-    }
 
     /**
      * Main method for the shell.
