@@ -19,6 +19,8 @@ public class SubImgCharMatcher {
     private static final int START_MAX = 0;
     private static final double MAX_BRIGHTNESS = 255;
     private static final double MIN_BRIGHTNESS = 0;
+    public static final String ASCII_OUT_OF_BOUNDS = "the char is not in the ASCII range";
+    
     public static final int LOWER_ASCII = 32;
     public static final int UPPER_ASCII = 126;
 
@@ -68,7 +70,10 @@ public class SubImgCharMatcher {
     /**
      * This method adds a char to our set
      */
-    public void addChar(char c){
+    public void addChar(char c) throws IllegalArgumentException{
+        if (c<LOWER_ASCII || c>UPPER_ASCII){
+            throw new IllegalArgumentException(ASCII_OUT_OF_BOUNDS);
+        }
         if(charSet.add(c)){
             if(!removedChars.remove(c)){
                 addedChars.add(c);
@@ -80,7 +85,10 @@ public class SubImgCharMatcher {
     /**
      * This method removes a char to our set
      */
-    public void removeChar(char c){
+    public void removeChar(char c) throws IllegalArgumentException{
+        if (c<LOWER_ASCII || c>UPPER_ASCII){
+            throw new IllegalArgumentException(ASCII_OUT_OF_BOUNDS);
+        }
         if(charSet.remove(c)){
             if(!addedChars.remove(c)){
                 removedChars.add(c);
