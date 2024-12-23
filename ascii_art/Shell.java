@@ -1,7 +1,6 @@
 package ascii_art;
 
 import java.io.IOException;
-import java.util.HashSet;
 
 import ascii_art.AsciiArtAlgorithm.TooSmallSetException;
 import ascii_output.AsciiOutput;
@@ -37,8 +36,7 @@ public class Shell{
     private final Image image;
     private int resolution;
     private AsciiOutput outputMethod;
-    private final HashSet<Character> charSet;
-    private String roundingMethod;
+    private final SubImgCharMatcher charMatcher;
 
     /**
      * Constructor for the Shell class.
@@ -46,11 +44,7 @@ public class Shell{
      * @throws IOException if the file cannot be opened.
      */
     public Shell(String imageName) throws IOException {
-        this.charSet = new HashSet<>();
-        for (char c : DEFAULT_CHAR_LIST) {
-            charSet.add(c);
-        }
-        this.roundingMethod = SubImgCharMatcher.ROUND_ABS;
+        this.charMatcher = new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.resolution = 2;
         this.outputMethod = new ConsoleAsciiOutput();
         this.image = new Image(imageName);
@@ -132,7 +126,7 @@ public class Shell{
                                     IllegalArgumentException {
         for (char c : makeCharArray(commandString))
         {
-            charSet.add(c);
+            charMatcher.addChar(c);
         }
     }
 
@@ -145,7 +139,7 @@ public class Shell{
                                     IllegalArgumentException {
         for (char c : makeCharArray(commandString))
         {
-            charSet.remove(c);
+            charMatcher.removeChar(c);
         }
     }
 
@@ -153,9 +147,7 @@ public class Shell{
      * Prints the characters in the char list.
      */
     private void printChars(){
-        for (char c : charSet) {
-            System.out.print(c+" ");
-        }
+        for (char c : charMatcher.getCharSet()){ System.out.print(c+" ");}
         System.out.println();
     }
 
@@ -176,9 +168,9 @@ public class Shell{
     private void parseRoundingMethod(String commandString) throws
                                         IllegalArgumentException {
         switch (commandString) {
-            case UP -> roundingMethod = SubImgCharMatcher.ROUND_UP;
-            case DOWN -> roundingMethod = SubImgCharMatcher.ROUND_DOWN;
-            case ABS -> roundingMethod = SubImgCharMatcher.ROUND_ABS;
+            case UP -> charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_UP);
+            case DOWN -> charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_DOWN);
+            case ABS -> charMatcher.setTypeOfRound(SubImgCharMatcher.ROUND_ABS);
             default -> throw new IllegalArgumentException(INCORRECT_FORMAT);
         }
     }
@@ -263,9 +255,8 @@ public class Shell{
                 }
             }
             case RUN -> {
-                try {
-                    generateArt();
-                } catch (TooSmallSetException e) {
+                try { generateArt(); }
+                catch (TooSmallSetException e) {
                     System.out.println("Did not execute. " + e.getMessage());
                 }
             }
@@ -274,7 +265,7 @@ public class Shell{
     }
 
     private void generateArt() throws TooSmallSetException {
-        AsciiArtAlgorithm asciiArt = new AsciiArtAlgorithm(image,resolution, charSet, roundingMethod);
+        AsciiArtAlgorithm asciiArt = new AsciiArtAlgorithm(image,resolution, charMatcher);
         outputMethod.out(asciiArt.run());
     }
 
