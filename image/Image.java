@@ -130,6 +130,7 @@ public class Image {
      */
     private static double grayCode(Color color) {
         if (color.equals(WHITE)) {
+            // To pre-handle the case of white pixels, avoid incorrect rounding.
             return 255;
         }
         return color.getRed() * RED_FACTOR +
