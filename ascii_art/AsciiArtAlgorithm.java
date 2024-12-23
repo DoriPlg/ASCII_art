@@ -1,6 +1,7 @@
 package ascii_art;
 
 import image.Image;
+import image.PrepareImage;
 import image_char_matching.SubImgCharMatcher;
 
 
@@ -11,8 +12,9 @@ import image_char_matching.SubImgCharMatcher;
 class AsciiArtAlgorithm {
 
     private static ImageSnapshot imgSnap = null;
+    private static PrepareImage lastImage = null;
 
-    private final Image image;
+    private final PrepareImage image;
     private final int resolution;
     private final SubImgCharMatcher characterMatcher;
 
@@ -24,7 +26,13 @@ class AsciiArtAlgorithm {
      * @param characterMatcher the character matcher to be used.
      */
     public AsciiArtAlgorithm(Image img, int resolution, SubImgCharMatcher characterMatcher){
-        this.image = Image.getBuffered(img);
+        if (lastImage != null && lastImage.getOriginalImage() == img){
+            image = lastImage;
+        } else {
+            image = new PrepareImage(img);
+            lastImage = image;
+            imgSnap = null;
+        }
         this.resolution = resolution;
         this.characterMatcher = characterMatcher;
     }
@@ -58,7 +66,7 @@ class AsciiArtAlgorithm {
      */
     private double[][] getBrightnessMatrix(){
         if (imgSnap == null || resolution != imgSnap.resolution()){
-            imgSnap = new ImageSnapshot(image,resolution,image.getImageBrightness(resolution));
+            imgSnap = new ImageSnapshot(resolution,image.getImageBrightness(resolution));
         }
         return imgSnap.brightness();
     }
@@ -76,5 +84,5 @@ class AsciiArtAlgorithm {
      * Private record to store the image, resolution, and brightness matrix.
      * Used to avoid recalculating the brightness matrix if the image and resolution have not changed.
      */
-    private record ImageSnapshot(Image image, int resolution, double[][] brightness) {}
+    private record ImageSnapshot(int resolution, double[][] brightness) {}
 }

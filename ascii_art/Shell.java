@@ -311,7 +311,9 @@ public class Shell{
             System.out.println("Could not start Shell. "+e.getMessage());
             return;
         }
-        shell.run(args[0]);
+        // shell.run(args[0]);
+        shell.run("images/cat.jpeg");
+        shell.run("images/board.jpeg");
     }
 
     /**
