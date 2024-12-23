@@ -6,7 +6,6 @@ import java.util.*;
  * This class is going to match an ASCII character to a sub image
  * with a given brightness(it is going to transform sub images into chars)
  */
-
 public class SubImgCharMatcher {
 
 
@@ -19,7 +18,7 @@ public class SubImgCharMatcher {
     private static final int START_MAX = 0;
     private static final double MAX_BRIGHTNESS = 255;
     private static final double MIN_BRIGHTNESS = 0;
-    public static final String ASCII_OUT_OF_BOUNDS = "the char is not in the ASCII range";
+    private static final String ASCII_OUT_OF_BOUNDS = "the char is not in the ASCII range";
 
     public static final int LOWER_ASCII = 32;
     public static final int UPPER_ASCII = 126;

@@ -39,21 +39,20 @@ public class Shell{
     private static final char[] DEFAULT_CHAR_LIST = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 
-    private final Image image;
+    private Image image;
     private int resolution;
     private AsciiOutput outputMethod;
     private final SubImgCharMatcher charMatcher;
 
     /**
      * Constructor for the Shell class.
-     * @param imageName the path to the image file.
      * @throws IOException if the file cannot be opened.
      */
-    public Shell(String imageName) throws IOException, IllegalArgumentException {
+    public Shell() throws IllegalArgumentException {
         this.charMatcher = new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.resolution = 2;
         this.outputMethod = new ConsoleAsciiOutput();
-        this.image = new Image(imageName);
+        this.image = null;
     }
 
     /**
@@ -217,8 +216,15 @@ public class Shell{
      * The shell will run until the user types "exit".
      * The shell will print an error message if the command is not recognized,
      * or if the command cannot be executed.
+     * @param imageName the name of the image file.
      */
-    public void run(){
+    public void run(String imageName){
+        try { this.image = new Image(imageName); }
+        catch (IOException e) {
+            System.out.println("Could not open file.");
+            return;
+        }
+        
         String[] commands = readInput();
         while (!(commands[0].equals(EXIT))){
             runCommand(commands);
@@ -299,17 +305,13 @@ public class Shell{
         }
         Shell shell;
         try {
-            shell = new Shell(args[0]);
-        }
-        catch (IOException e){
-            System.out.println("Could not open file.");
-            return;
+            shell = new Shell();
         }
         catch (IllegalArgumentException e){
             System.out.println("Could not start Shell. "+e.getMessage());
             return;
         }
-        shell.run();
+        shell.run(args[0]);
     }
 
     /**
