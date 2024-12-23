@@ -20,7 +20,7 @@ public class SubImgCharMatcher {
     private static final double MAX_BRIGHTNESS = 255;
     private static final double MIN_BRIGHTNESS = 0;
     public static final String ASCII_OUT_OF_BOUNDS = "the char is not in the ASCII range";
-    
+
     public static final int LOWER_ASCII = 32;
     public static final int UPPER_ASCII = 126;
 
@@ -34,9 +34,11 @@ public class SubImgCharMatcher {
 
 
     /**
-     * The constructor for this class
+     * The constructor for this class, it initializes the set of chars
+     * and normalizes the brightness of the chars
+     * @param charArray the array of chars that we want to use
      */
-    public SubImgCharMatcher(char[] charArray){
+    public SubImgCharMatcher(char[] charArray) throws IllegalArgumentException{
         this.minBrightness = START_MIN;
         this.maxBrightness = START_MAX;
         this.charSet = new HashSet<>();
@@ -55,6 +57,8 @@ public class SubImgCharMatcher {
      * return the char from the set of chars, with the closest rounded brightness
      * Given a few chars with the same brightness this method will return the one
      * with the lowest ASCII value.
+     * @param brightness the brightness of the sub image
+     * @return the char that is the closest to the brightness
      */
     public char getCharByImageBrightness(double brightness){
         if(!(addedChars.isEmpty() && removedChars.isEmpty())){
@@ -69,6 +73,8 @@ public class SubImgCharMatcher {
 
     /**
      * This method adds a char to our set
+     * @param c the char that we want to add
+     * @throws IllegalArgumentException if the char is not in the ASCII range [32,126]
      */
     public void addChar(char c) throws IllegalArgumentException{
         if (c<LOWER_ASCII || c>UPPER_ASCII){
@@ -84,6 +90,8 @@ public class SubImgCharMatcher {
 
     /**
      * This method removes a char to our set
+     * @param c the char that we want to remove
+     * @throws IllegalArgumentException if the char is not in the ASCII range [32,126]
      */
     public void removeChar(char c) throws IllegalArgumentException{
         if (c<LOWER_ASCII || c>UPPER_ASCII){
@@ -98,7 +106,8 @@ public class SubImgCharMatcher {
 
 
     /**
-     * Returns reference to our set of chars
+     * Returns reference to the set of chars
+     * @return the set of chars
      */
     public Set<Character> getCharSet() {
         return charSet;
@@ -106,6 +115,7 @@ public class SubImgCharMatcher {
 
     /**
      * Allows ASCII_art to define the way of rounding the brightness for each char
+     * @param typeOfRound the type of rounding that we want to use, it can be "up", "down" or "abs"
      */
     public void setTypeOfRound(String typeOfRound){ // default abs
         this.typeOfRound = typeOfRound;
@@ -113,13 +123,13 @@ public class SubImgCharMatcher {
 
 
     /**
-     * Method that builds our char set from the array of chars that we
-     * get in the constructor
+     * Method that builds our char set from the array of chars that we get in the constructor
+     * @param charArray the array of chars that we want to use
      */
-    private void buildSet(char[] charArray) {
+    private void buildSet(char[] charArray) throws IllegalArgumentException{
         if(charArray!=null){
             for (char c : charArray) {
-                this.charSet.add(c);
+                addChar(c);
             }
         }
     }
@@ -202,7 +212,6 @@ public class SubImgCharMatcher {
         for(char i = LOWER_ASCII;i<UPPER_ASCII+1;i++){
             convertChar(i);
         }
-        normalizeBrightness();
     }
 
 
@@ -215,7 +224,7 @@ public class SubImgCharMatcher {
         if (normalizedBrightness.containsKey(brightness)){
             return brightness;
         }
-        // tailMap returns a value larger or euqal to the key so there is no problem in the maximum case
+        // tailMap returns a value larger or equal to the key so there is no problem in the maximum case
         double lowerEstimation = normalizedBrightness.tailMap(brightness).firstKey();
         if(!normalizedBrightness.headMap(brightness).isEmpty()){
             upperEstimation =  normalizedBrightness.headMap(brightness).lastKey();

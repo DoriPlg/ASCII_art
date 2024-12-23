@@ -49,7 +49,7 @@ public class Shell{
      * @param imageName the path to the image file.
      * @throws IOException if the file cannot be opened.
      */
-    public Shell(String imageName) throws IOException {
+    public Shell(String imageName) throws IOException, IllegalArgumentException {
         this.charMatcher = new SubImgCharMatcher(DEFAULT_CHAR_LIST);
         this.resolution = 2;
         this.outputMethod = new ConsoleAsciiOutput();
@@ -303,6 +303,10 @@ public class Shell{
         }
         catch (IOException e){
             System.out.println("Could not open file.");
+            return;
+        }
+        catch (IllegalArgumentException e){
+            System.out.println("Could not start Shell. "+e.getMessage());
             return;
         }
         shell.run();
