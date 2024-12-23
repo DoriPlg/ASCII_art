@@ -102,9 +102,9 @@ public class Shell{
     private char[] makeCharArray(String charString) throws
                                     IllegalArgumentException {
         if (charString.equals(ALL_CHARS)){
-            char[] charList = new char[126-32+1];
+            char[] charList = new char[SubImgCharMatcher.UPPER_ASCII-SubImgCharMatcher.LOWER_ASCII+1];
             for (char i = 0; i < charList.length; i++) {
-                charList[i] = (char)(32+i);}
+                charList[i] = (char)(SubImgCharMatcher.LOWER_ASCII+i);}
             return charList;
         }
         else if (charString.equals(SPACE_KEY)){

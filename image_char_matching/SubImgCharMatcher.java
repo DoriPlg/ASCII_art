@@ -17,10 +17,10 @@ public class SubImgCharMatcher {
     private final SortedMap<Double,Character> normalizedBrightness; //tree set
     private static final int START_MIN = 1;
     private static final int START_MAX = 0;
-    private static final int defaultLowerASCII = 32;
-    private static final int defaultUpperASCII = 126;
     private static final double MAX_BRIGHTNESS = 255;
     private static final double MIN_BRIGHTNESS = 0;
+    public static final int LOWER_ASCII = 32;
+    public static final int UPPER_ASCII = 126;
 
     private double minBrightness ;
     private double maxBrightness ;
@@ -191,7 +191,7 @@ public class SubImgCharMatcher {
      * Initializes the map with all the possible values of chars from ASCII
      */
     private void initializeStorageMap() {
-        for(char i = defaultLowerASCII;i<defaultUpperASCII+1;i++){
+        for(char i = LOWER_ASCII;i<UPPER_ASCII+1;i++){
             convertChar(i);
         }
         normalizeBrightness();
