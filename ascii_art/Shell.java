@@ -88,7 +88,7 @@ public class Shell{
             up = false;
         }
         else {
-            throw new IllegalArgumentException("incorrect direction.");
+            throw new IllegalArgumentException(INCORRECT_FORMAT);
         }
         if (up && resolution * 2 > image.getWidth() ||
                 !up && resolution / 2 < Math.max(1,image.getWidth()/image.getHeight())){
